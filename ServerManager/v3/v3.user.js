@@ -73,6 +73,9 @@
             .copy-link-btn { background-color: #17a2b8; }
             .copy-link-btn:hover { background-color: #138496; }
 
+            .save-preset-btn { background-color: #28a745; }
+            .save-preset-btn:hover { background-color: #218838; }
+
             /* Global Save Button */
             #my-servers-form .table thead, #my-servers-form > .save-btn3 { display: none; }
             .global-save-button-container { margin-top: 20px; text-align: center; padding: 15px; border-top: 1px solid #444; background-color: #2a2a2a; border-radius: 8px; }
@@ -109,20 +112,25 @@
         `
     };
 
-    const PRESET_DATA = {
+    const DEFAULT_PRESETS = {
         public: {
+            isDefault: true,
             checkboxes: { enabled: true, public: true, mp_clanwar: true, amx_giveammo: true, mp_friendlyfire: false, mp_autoteambalance: true, mp_afkbomb: true, mp_restarter: true, afk_kick: true, perks: true, statistics: true, chickens: true, rnd_death: true, votekick: true, bonus_slot: true, tfb: true, statsx: true, dib3: true, rwd_grenadedrop: true, },
             cvars: { mp_rs_rounds: '200', pb_maxbots: '6', minimal_skill: '0', ping_limit: '1000', mp_roundtime: '1.75', mp_buytime: '0.25', mp_c4timer: '35', mp_freezetime: '0', mp_startmoney: '16000', csem_sank_cd: '300', limit_hegren: '1', limit_sgren: '1', limit_flash: '2', }
         },
         '5vs5': {
+            isDefault: true,
             checkboxes: { enabled: true, public: false, mp_clanwar: true, nobombscore_enabled: true, bonus_slot: true, mp_friendlyfire: true, rwd_grenadedrop: true, },
             cvars: { mp_rs_rounds: '25', pb_maxbots: '0', minimal_skill: '0', ping_limit: '1000', mp_roundtime: '1.75', mp_buytime: '0.25', mp_c4timer: '35', mp_freezetime: '15', mp_startmoney: '800', csem_sank_cd: '300', limit_hegren: '1', limit_sgren: '1', limit_flash: '2', }
         },
         deathmatch: {
+            isDefault: true,
             checkboxes: { enabled: true, public: true, mp_friendlyfire: true, mp_autoteambalance: true, mp_afkbomb: true, afk_kick: true, statistics: true, votekick: true, bonus_slot: true, tfb: true, statsx: true, dib3: false, rwd_grenadedrop: true, },
             cvars: { mp_rs_rounds: '200', pb_maxbots: '6', minimal_skill: '0', ping_limit: '1000', mp_roundtime: '2.5', mp_buytime: '0.5', mp_c4timer: '35', mp_freezetime: '0', mp_startmoney: '1000', csem_sank_cd: '300', limit_hegren: '1', limit_sgren: '1', limit_flash: '2', }
         }
     };
+
+    let PRESET_DATA = {};
 
     // --- 2. CORE MODULES ---
 
@@ -260,6 +268,15 @@
 
     // --- 4. FEATURE MODULES ---
 
+    /** Update the preset controls in the UI */
+    function updatePresetControls(controlGroup, serverId, detailsDiv) {
+        controlGroup.innerHTML = '<span>MODE:</span>'; // Clear existing buttons
+        Object.keys(PRESET_DATA).forEach(presetName => {
+            const input = createAndAppendElement('input', controlGroup, { type: 'radio', id: `mode${presetName}_${serverId}`, name: `gameMode_${serverId}`, value: presetName });
+            const label = createAndAppendElement('label', controlGroup, { for: `mode${presetName}_${serverId}` }, presetName);
+        });
+    }
+
     /** Make Sections Collapsible */
     function makeCollapsible(headerElement, contentElement) {
         if (!headerElement || !contentElement) return;
@@ -274,6 +291,65 @@
             const icon = headerElement.querySelector('.toggle-icon');
             if (icon) icon.innerHTML = isHidden ? '&#x25BC;' : '&#x25B6;';
         });
+    }
+
+    /** Load presets from storage or use defaults */
+    function loadPresets() {
+        const storedPresets = GM_getValue('serverManagerPresets', null);
+        if (storedPresets) {
+            PRESET_DATA = storedPresets;
+        } else {
+            PRESET_DATA = JSON.parse(JSON.stringify(DEFAULT_PRESETS)); // Deep copy
+            GM_setValue('serverManagerPresets', PRESET_DATA);
+        }
+    }
+
+    /** Apply Server Configuration Preset */
+    /** Save the current server settings as a new preset */
+    function savePreset(serverId, detailsDiv) {
+        const presetName = prompt('Enter a name for this preset:', '');
+        if (!presetName || !presetName.trim()) {
+            showToast('Preset name cannot be empty.', 'error');
+            return;
+        }
+        if (PRESET_DATA[presetName]) {
+            if (!confirm(`A preset named "${presetName}" already exists. Overwrite it?`)) {
+                return;
+            }
+        }
+
+        const newPreset = {
+            isDefault: false,
+            checkboxes: {},
+            cvars: {}
+        };
+
+        detailsDiv.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+            const match = cb.id.match(/server\[\d+\]\[(cvars)\]\[(.+)\]/) || cb.id.match(/server\[\d+\]\[(public|enabled)\]/);
+            if (match) {
+                const key = match[2] || match[1];
+                newPreset.checkboxes[key] = cb.checked;
+            }
+        });
+
+        detailsDiv.querySelectorAll('select').forEach(select => {
+            const match = select.name.match(/server\[\d+\]\[(cvars)\]\[(.+)\]/);
+            if (match) {
+                const key = match[2];
+                newPreset.cvars[key] = select.value;
+            }
+        });
+
+        PRESET_DATA[presetName] = newPreset;
+        GM_setValue('serverManagerPresets', PRESET_DATA);
+        showToast(`Preset "${presetName}" saved!`, 'success');
+
+        // Refresh the preset buttons
+        const serverControls = detailsDiv.querySelector('.server-controls');
+        const controlGroup = serverControls.querySelector('.control-group');
+        const serverCard = detailsDiv.closest('.server-card');
+        const currentServerId = serverCard.dataset.serverId;
+        updatePresetControls(controlGroup, currentServerId, detailsDiv);
     }
 
     /** Apply Server Configuration Preset */
@@ -433,6 +509,7 @@
     // --- 5. INITIALIZATION ---
 
     function initialize() {
+        loadPresets();
         GM_addStyle(CONFIG.css);
         const myServersForm = getElementById(CONFIG.mainFormId);
         if (!myServersForm) return;
@@ -490,17 +567,16 @@
                 });
 
                 // Create Controls
-                const serverControls = createAndAppendElement('div', detailsDiv, { classList: ['server-controls'] }, `
-                    <div class="control-group">
-                        <span>MODE:</span>
-                        <input type="radio" id="modePublic_${serverId}" name="gameMode_${serverId}" value="public"><label for="modePublic_${serverId}">Public</label>
-                        <input type="radio" id="mode5vs5_${serverId}" name="gameMode_${serverId}" value="5vs5"><label for="mode5vs5_${serverId}">5vs5</label>
-                        <input type="radio" id="modeDeathmatch_${serverId}" name="gameMode_${serverId}" value="deathmatch"><label for="modeDeathmatch_${serverId}">Deathmatch</label>
-                    </div>
-                    <div class="action-buttons">
-                        <button type="button" class="copy-link-btn" data-server-id="${serverId}"><i class="fa fa-clipboard"></i> Copy Link</button>
-                        <button type="button" class="discord-btn" data-server-id="${serverId}"><i class="fa fa-discord"></i> Share to Discord</button>
-                    </div>`);
+                const serverControls = createAndAppendElement('div', detailsDiv, { classList: ['server-controls'] });
+                const controlGroup = createAndAppendElement('div', serverControls, { classList: ['control-group'] });
+                updatePresetControls(controlGroup, serverId, detailsDiv);
+
+                const actionButtons = createAndAppendElement('div', serverControls, { classList: ['action-buttons'] });
+                actionButtons.innerHTML = `
+                    <button type="button" class="save-preset-btn" data-server-id="${serverId}"><i class="fa fa-save"></i> Save as Preset</button>
+                    <button type="button" class="copy-link-btn" data-server-id="${serverId}"><i class="fa fa-clipboard"></i> Copy Link</button>
+                    <button type="button" class="discord-btn" data-server-id="${serverId}"><i class="fa fa-discord"></i> Share to Discord</button>
+                `;
                 detailsDiv.insertBefore(serverControls, detailsDiv.firstChild);
 
                 // Move row into details table
@@ -520,6 +596,7 @@
                 });
                 serverControls.querySelector('.discord-btn').addEventListener('click', () => sendServerToDiscord(serverId, detailsDiv));
                 serverControls.querySelector('.copy-link-btn').addEventListener('click', () => copyServerLinkToClipboard(serverId, detailsDiv));
+                serverControls.querySelector('.save-preset-btn').addEventListener('click', () => savePreset(serverId, detailsDiv));
 
                 const updateHeaderCallback = () => {
                     const latestIsEnabled = detailsDiv.querySelector(CONFIG.SELECTORS.serverEnabledCheckbox(serverId))?.checked;

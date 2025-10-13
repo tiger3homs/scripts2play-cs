@@ -86,7 +86,7 @@
             const style = document.createElement('style');
             style.innerHTML = `
                 .cs-v3-config-button {
-                    position: fixed; top: 50px; right: 50px; z-index: 9999;
+                    position: fixed; top: 60px; right: 70px; z-index: 9999;
                     background: rgba(0,0,0,0.7); color: #00ffae;
                     padding: 8px; border-radius: 5px; cursor: pointer;
                     transition: background 0.2s; width: 24px; height: 24px;
@@ -107,6 +107,12 @@
                     margin-top: 0; margin-bottom: 20px; color: #00bcd4;
                     font-size: 22px; text-align: center; font-weight: 600;
                 }
+                .cs-v3-close-btn {
+                    position: absolute; top: 15px; right: 20px;
+                    color: #aaa; font-size: 28px; font-weight: bold;
+                    cursor: pointer; line-height: 1;
+                }
+                .cs-v3-close-btn:hover { color: #fff; }
                 #cs-v3-command-list { margin-bottom: 20px; }
                 .command-item {
                     display: flex; align-items: center; margin-bottom: 10px;
@@ -173,6 +179,7 @@
             this.menuDialog = document.createElement('div');
             this.menuDialog.id = 'cs-v3-config-menu';
             this.menuDialog.innerHTML = `
+                <span class="cs-v3-close-btn">&times;</span>
                 <h2>CS User Config v3</h2>
                 <div id="cs-v3-command-list"></div>
                 <div class="cs-v3-input-group">
@@ -230,6 +237,7 @@
 
         addEventListeners() {
             this.configButton.addEventListener("click", () => this.toggleMenu());
+            this.menuDialog.querySelector('.cs-v3-close-btn').addEventListener('click', () => this.toggleMenu());
 
             this.menuDialog.querySelector('#cs-v3-add-btn').addEventListener('click', () => {
                 const newCommandText = this.addCommandInput.value.trim();
