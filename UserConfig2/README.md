@@ -1,15 +1,19 @@
-# CS User Config (Advanced)
+# CS User Config v3
 
 Automatically executes a set of commands when you join a server, providing a convenient in-game UI to add, edit, enable, or disable your custom commands.
 
 <br>
+
+> [!NOTE]
+> The screenshot below is from a previous version. An updated image for v3 will be added soon.
 
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/2e28087e-ead0-472a-9d0e-4374d93baf92" />
 
 ## Features
 
 *   **Automatic Execution**: Configured commands run automatically when you join a server.
-*   **Interactive UI**: A sleek, in-game menu (toggle with `Alt + Shift + X`) allows for:
+*   **Modern UI**: A sleek, floating gear icon opens a modal window for managing commands.
+*   **Interactive Management**: The modal allows for:
     *   Adding new commands
     *   Editing existing commands
     *   Enabling/disabling commands individually
@@ -29,16 +33,17 @@ Automatically executes a set of commands when you join a server, providing a con
 2.  **Create a New User Script**:
     *   Click on the Tampermonkey icon in your browser toolbar.
     *   Select "Create a new script...".
-3.  **Paste the Script**: Delete any existing code in the new script editor and paste the entire content of `CS_User_Config_Advanced.js` into it.
+3.  **Paste the Script**: Delete any existing code in the new script editor and paste the entire content of `v3.user.js` into it.
 4.  **Save**: Save the script (usually by pressing `Ctrl + S` or `File > Save`).
 
 ## How to Use
 
 1.  **Join a Play-CS.com Server**: Navigate to `https://game.play-cs.com/` and join any server.
 2.  **Automatic Execution**: Once you're in the game and the chat input appears, the script will automatically execute all currently enabled commands.
-3.  **Open the Menu**: Press `Alt + Shift + X` to toggle the visibility of the "CS User Config" menu.
+3.  **Open the Menu**: Click the floating **gear icon** (⚙️) on the top right of the screen to open the "CS User Config" menu.
     *   If you're in pointer-lock mode (first-person view), the script will automatically exit pointer-lock to allow interaction with the menu.
-4.  **Manage Commands**:
+4.  **Toggle Icon Visibility**: If the gear icon is in your way, press `Alt + Shift + X` to hide or show it.
+5.  **Manage Commands**:
     *   **Enable/Disable**: Use the checkboxes next to each command to enable or disable it.
     *   **Edit**: Click directly on a command's text field to modify it.
     *   **Add New**: Type a command into the "New command" input field and click "Add".
@@ -62,12 +67,12 @@ Automatically executes a set of commands when you join a server, providing a con
 
 *   **Menu not appearing**: Ensure Tampermonkey is enabled for `play-cs.com`. Check your browser's console (`F12`) for any errors.
 *   **Commands not executing**: Make sure you are in an actual server where the chat input box is visible. The script waits for the game UI to appear.
-*   **Keybinds not working outside menu**: If you have the menu open, make sure you click outside of the menu or press `Alt + Shift + X` again to close it and re-enable pointer lock/game controls.
-*   **Commands not saving**: Ensure you click "Save Configuration" after making changes. Check Tampermonkey's storage for `cs_user_config_commands`.
+*   **Keybinds not working outside menu**: If you have the menu open, make sure you click outside of the menu or click the gear icon again to close it and re-enable pointer lock/game controls.
+*   **Commands not saving**: Ensure you click "Save" after making changes. Check Tampermonkey's storage for `cs_user_config_commands_v3`.
 
 ## Contribution
 
-This script was initially created by `tiger3homs` (aka `obbe.00` on Discord) and improved by Gemini. Feel free to fork, modify, and suggest improvements!
+This script was initially created by `tiger3homs` (aka `obbe.00` on Discord) and was significantly refactored and improved in v3. Feel free to fork, modify, and suggest improvements!
 
 <br>
 

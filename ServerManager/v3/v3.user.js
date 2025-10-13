@@ -80,6 +80,12 @@
             #my-servers-form .table thead, #my-servers-form > .save-btn3 { display: none; }
             .global-save-button-container { margin-top: 20px; text-align: center; padding: 15px; border-top: 1px solid #444; background-color: #2a2a2a; border-radius: 8px; }
             .global-save-button-container .save-btn3 { background-color: #dc3545; color: white !important; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 1.1em; text-decoration: none !important; }
+
+            /* Preset Controls */
+            .preset-container { display: inline-flex; align-items: center; margin-right: 5px; }
+            .delete-preset-btn { background: #dc3545; color: white; border: none; border-radius: 50%; width: 20px; height: 20px; cursor: pointer; margin-left: -8px; z-index: 1; font-size: 14px; line-height: 20px; text-align: center; padding: 0; }
+            .delete-preset-btn:hover { background: #c82333; }
+            .control-group label { border-top-right-radius: 0; border-bottom-right-radius: 0; }
             .global-save-button-container .save-btn3:hover { background-color: #c82333; }
 
             /* Discord Modal */
@@ -272,8 +278,19 @@
     function updatePresetControls(controlGroup, serverId, detailsDiv) {
         controlGroup.innerHTML = '<span>MODE:</span>'; // Clear existing buttons
         Object.keys(PRESET_DATA).forEach(presetName => {
-            const input = createAndAppendElement('input', controlGroup, { type: 'radio', id: `mode${presetName}_${serverId}`, name: `gameMode_${serverId}`, value: presetName });
-            const label = createAndAppendElement('label', controlGroup, { for: `mode${presetName}_${serverId}` }, presetName);
+            const preset = PRESET_DATA[presetName];
+            const presetContainer = createAndAppendElement('span', controlGroup, { classList: ['preset-container'] });
+            const input = createAndAppendElement('input', presetContainer, { type: 'radio', id: `mode${presetName}_${serverId}`, name: `gameMode_${serverId}`, value: presetName });
+            const label = createAndAppendElement('label', presetContainer, { for: `mode${presetName}_${serverId}` }, presetName);
+
+            if (!preset.isDefault) {
+                const deleteBtn = createAndAppendElement('button', presetContainer, {
+                    type: 'button',
+                    classList: ['delete-preset-btn'],
+                    dataset: { presetName: presetName },
+                    innerHTML: '&times;'
+                });
+            }
         });
     }
 
@@ -305,6 +322,30 @@
     }
 
     /** Apply Server Configuration Preset */
+    /** Delete a custom preset */
+    function deletePreset(presetName) {
+        if (!PRESET_DATA[presetName] || PRESET_DATA[presetName].isDefault) {
+            showToast('Cannot delete a default preset.', 'error');
+            return;
+        }
+
+        if (confirm(`Are you sure you want to delete the preset "${presetName}"?`)) {
+            delete PRESET_DATA[presetName];
+            GM_setValue('serverManagerPresets', PRESET_DATA);
+            showToast(`Preset "${presetName}" deleted.`, 'success');
+
+            // Refresh all preset controls on the page
+            document.querySelectorAll('.server-card').forEach(card => {
+                const id = card.dataset.serverId;
+                const controls = card.querySelector('.server-controls .control-group');
+                const details = card.querySelector('.server-card-details');
+                if (id && controls && details) {
+                    updatePresetControls(controls, id, details);
+                }
+            });
+        }
+    }
+
     /** Save the current server settings as a new preset */
     function savePreset(serverId, detailsDiv) {
         const presetName = prompt('Enter a name for this preset:', '');
@@ -594,6 +635,14 @@
                 serverControls.addEventListener('change', e => {
                     if (e.target.name === `gameMode_${serverId}`) applyPreset(e.target.value, serverId, detailsDiv);
                 });
+
+                serverControls.addEventListener('click', e => {
+                    if (e.target.classList.contains('delete-preset-btn')) {
+                        const presetName = e.target.dataset.presetName;
+                        deletePreset(presetName);
+                    }
+                });
+
                 serverControls.querySelector('.discord-btn').addEventListener('click', () => sendServerToDiscord(serverId, detailsDiv));
                 serverControls.querySelector('.copy-link-btn').addEventListener('click', () => copyServerLinkToClipboard(serverId, detailsDiv));
                 serverControls.querySelector('.save-preset-btn').addEventListener('click', () => savePreset(serverId, detailsDiv));
