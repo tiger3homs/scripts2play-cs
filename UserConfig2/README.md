@@ -4,10 +4,7 @@ Automatically executes a set of commands when you join a server, providing a con
 
 <br>
 
-> [!NOTE]
-> The screenshot below is from a previous version. An updated image for v3 will be added soon.
-
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/2e28087e-ead0-472a-9d0e-4374d93baf92" />![alt text](image.png)
+![alt text](image.png)
 
 ## Features
 
