@@ -4,7 +4,7 @@ Automatically executes a set of commands when you join a server, providing a con
 
 <br>
 
-![alt text](image.png)
+![alt text](image-2.png)
 
 ## Features
 
