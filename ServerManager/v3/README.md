@@ -2,7 +2,7 @@
 
 **Transform your play-cs.com/myservers page into a powerful, organized server management hub.**
 
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/f19ab61f-243f-4d51-9d41-0cea29130153" />
+![alt text](image-1.png)
 
 
 This Tampermonkey script provides a complete overhaul of the server management interface on [play-cs.com/myservers](https://play-cs.com/myservers). It replaces the standard table layout with a modern, collapsible card system, adding numerous quality-of-life features designed to make managing your Counter-Strike servers more efficient and enjoyable.
@@ -29,6 +29,20 @@ This Tampermonkey script provides a complete overhaul of the server management i
 *   **Fixed Server Links:** Corrects malformed server join links to ensure they always work.
 *   **Toast Notifications:** Provides subtle, non-intrusive pop-up messages for actions like saving webhooks or sharing servers.
 *   **Dynamic Header Updates:** Server card headers update instantly when you change the server name, enabled/public status, or map.
+
+## ✨ What's New in V3?
+
+Version 3 introduces significant enhancements focused on customization, convenience, and a more polished user experience:
+
+*   **Custom Presets:** You can now save your own server configurations as presets!
+    *   Click the **"Save as Preset"** button to name and save your current setup.
+    *   Quickly apply your custom presets from the "MODE" selector.
+    *   Delete custom presets you no longer need with a single click.
+*   **Copy Server Info:** A new **"Copy Link"** button allows you to instantly copy the server's join link and PIN to your clipboard, making it easier than ever to share with friends.
+*   **UI Enhancements:**
+    *   Action buttons ("Save as Preset," "Copy Link," "Share to Discord") now include icons for better visual identification.
+    *   The overall design has been refined for a cleaner and more intuitive interface.
+*   **Under-the-Hood Improvements:** The script has been refactored for better performance, stability, and easier future updates.
 
 ## 🚀 Installation
 
