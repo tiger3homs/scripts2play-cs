@@ -117,7 +117,11 @@ volume "0.2"
 wheel_jump_everywhere "1"
 zoom_sensitivity_ratio "1.2"
 _cl_autowepswitch "0"
+cl_min_t 6
+cl_min_ct 2
+cl_minmodels 1
 
+![alt text](image-1.png)
 
 ***
 
