@@ -165,10 +165,100 @@
         document.body.appendChild(toggleButton);
     }
 
+    // --- Refactored code to add player info to server card ---
+
+    async function getPlayerId() {
+        const cachedPlayerId = localStorage.getItem('playcs_playerId');
+        if (cachedPlayerId) {
+            return cachedPlayerId;
+        }
+
+        try {
+            const response = await fetch('https://play-cs.com/en/profile');
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            const html = await response.text();
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const ths = Array.from(doc.querySelectorAll('th'));
+            const playerIdTh = ths.find(th => th.innerText.trim() === 'Player ID');
+            if (playerIdTh) {
+                const playerId = playerIdTh.nextElementSibling.innerText.trim().replace('#', '');
+                localStorage.setItem('playcs_playerId', playerId);
+                return playerId;
+            }
+            throw new Error('Player ID not found on profile page.');
+        } catch (error) {
+            console.error('Error fetching Player ID:', error);
+            return null;
+        }
+    }
+
+    async function getPlayerStats(playerId) {
+        if (!playerId) return null;
+        try {
+            const response = await fetch(`https://play-cs.com/rating/search/${playerId}`);
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            const html = await response.text();
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+
+            const playerNameElement = doc.querySelector('.player_name');
+            const usernameWithFlag = playerNameElement ? playerNameElement.innerHTML : 'Username not found';
+
+            const tds = Array.from(doc.querySelectorAll('td'));
+            const skillTd = tds.find(td => td.innerText.includes('Skill:'));
+            let skill = 'Skill not found';
+            if (skillTd) {
+                const skillMatch = skillTd.innerText.match(/Skill:\s*([\d.]+)/);
+                if (skillMatch && skillMatch[1]) {
+                    skill = skillMatch[1];
+                } else {
+                    const clanMatch = skillTd.innerText.match(/Clan:\s*\w+\s*([\d.]+)/);
+                    if (clanMatch && clanMatch[1]) {
+                        skill = clanMatch[1];
+                    }
+                }
+            }
+
+            return { usernameWithFlag, skill };
+        } catch (error) {
+            console.error('Error fetching player stats:', error);
+            return null;
+        }
+    }
+
+    function updateServerCard(playerId, stats) {
+        if (!stats) return;
+        const serverCard = document.querySelector('.lobby3-server-card');
+        if (serverCard) {
+            const playerInfoDiv = document.createElement('div');
+            playerInfoDiv.style.padding = '10px';
+            playerInfoDiv.innerHTML = `
+                <span class="main-info-middle-userdata__mmr">
+                    <a href="/rating/search/${playerId}" style="color: #91ff08;">
+                    ${stats.usernameWithFlag} Skill: ${stats.skill}
+                    </a>
+                </span>
+            `;
+            serverCard.appendChild(playerInfoDiv);
+        } else {
+            console.log('Server card not found for displaying player info.');
+        }
+    }
+
+    async function addPlayerInfoToServerCard() {
+        const playerId = await getPlayerId();
+        if (playerId) {
+            const stats = await getPlayerStats(playerId);
+            updateServerCard(playerId, stats);
+        }
+    }
+
     // --- Run both scripts on page load ---
     function initializeScripts() {
         setupActiveNavObserver();
         addToggleButton();
+        addPlayerInfoToServerCard();
     }
 
     // Run the function when the DOM is fully loaded
