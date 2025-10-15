@@ -1,28 +1,33 @@
-# Highlight Active Lobby Nav Item
+# New Sidebar Script for play-cs.com
 
-This Tampermonkey script enhances the `play-cs.com` website by dynamically highlighting the active page in the lobby's side navigation menu.
+This Tampermonkey script enhances the `play-cs.com` website with several quality-of-life features, including a hideable sidebar, highlighting of the active lobby navigation item, and a display of your player stats on the server card.
 
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/54308c58-36da-41f7-add4-95158db337a7" />
+![alt text](image.png)
 
+## Features
 
-## The Problem It Solves
+### 1. Hideable Sidebar
 
-On `play-cs.com`, when navigating through different sections of the lobby (e.g., "Servers," "Profile," "Shop"), the side navigation menu (`.lobby3-side-nav`) **does not always visually indicate which page you are currently on.** This can lead to a less intuitive user experience, as users might not easily see their current location within the site's structure.
+*   **Toggle Button:** Adds a hamburger menu icon (☰) to the top-left of the page.
+*   **More Space:** Clicking the button hides the sidebar, allowing the main content to expand to the full width of the page for a less cluttered view.
 
-## How It Works
+### 2. Highlight Active Lobby Nav Item
 
-This script addresses the issue by:
+*   **The Problem It Solves:** On `play-cs.com`, the side navigation menu doesn't always visually indicate which page you are currently on. This script fixes that.
+*   **How It Works:**
+    *   It intelligently compares the current page's URL with the navigation links.
+    *   It handles different URL formats (relative, absolute, and language-specific paths).
+    *   It adds the `lobby3-side-nav__item--active` class to the current page's link, which highlights it using the site's own styling.
+    *   It dynamically updates the highlight as you navigate through the site.
 
-1.  **Identifying Navigation Items:** It targets the navigation links within the `.lobby3-side-nav__item` elements.
-2.  **Normalizing URLs:** It intelligently compares the current page's URL with the `href` attributes of the navigation items. This comparison handles:
-    *   Both relative (`/servers`) and absolute (`https://play-cs.com/servers`) URLs.
-    *   Variations in URLs (e.g., `/en/servers` vs. `/servers`) by normalizing paths to ensure accurate matching.
-    *   Ignoring query parameters and hash values that don't represent a different page.
-3.  **Applying an Active Class:** When a match is found, the script adds the CSS class `lobby3-side-nav__item--active` to the corresponding navigation item. This class is typically styled by the website's own CSS to provide a visual highlight (e.g., a different background color, bolder text).
-4.  **Dynamic Updates:** The script uses a `MutationObserver` to detect when new content is added to the page (which can happen with single-page applications or dynamic loading). It also listens for `popstate` and `hashchange` events to ensure the active item is updated correctly when users navigate using browser history (back/forward buttons) or internal page anchors.
+### 3. Player Info on Server Card
+
+*   **Quick Stats:** Fetches your player stats and displays them directly on the server card in the lobby.
+*   **Information Displayed:** Shows your username, flag, and skill level.
+*   **Performance:** The script is optimized for speed. It finds your Player ID directly from the lobby page and caches it, so your stats load almost instantly.
 
 ## Benefits
 
-*   **Improved User Experience:** Users can instantly see which section of the lobby they are currently browsing.
-*   **Enhanced Navigation:** Makes it easier to understand the site's structure and where you are within it.
-*   **Seamless Integration:** The script uses the website's existing CSS class for active states, ensuring it looks native to the site's design.
+*   **Improved User Experience:** A cleaner interface with more space and at-a-glance information.
+*   **Enhanced Navigation:** Easily see which section of the lobby you are in.
+*   **Seamless Integration:** The script's features feel like a native part of the website.
