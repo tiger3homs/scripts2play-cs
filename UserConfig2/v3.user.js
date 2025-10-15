@@ -3,7 +3,7 @@
 // @namespace    http://tampermonkey.net/
 // @version      3.0
 // @description  Refactored script to automatically execute commands with an improved UI.
-// @author       tiger3homs aka obbe.00 (Refactored by Cline)
+// @author       tiger3homs aka (obbe.00 on discord)
 // @match        https://game.play-cs.com/*
 // @match        https://www.play-cs.com/*
 // @icon         https://play-cs.com/img/favicon.png

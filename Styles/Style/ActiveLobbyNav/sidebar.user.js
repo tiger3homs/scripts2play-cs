@@ -1,9 +1,9 @@
 // ==UserScript==
-// @name         New Sidebar
+// @name         Play-CS Sidebar
 // @namespace    http://tampermonkey.net/
-// @version      1.0
-// @description  Highlights the active lobby nav item and adds a hideable sidebar.
-// @author       tiger3homs & You
+// @version      1.3
+// @description  Combines ActiveLobbyNav, Hidebar, and Player Stats on Server Card functionalities for Play-CS.com
+// @author       tiger3homs aka (obbe.00 on discord)
 // @match        https://play-cs.com/*
 // @grant        none
 // ==/UserScript==
