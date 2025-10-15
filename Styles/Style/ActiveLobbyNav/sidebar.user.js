@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         Combined Active Lobby Nav & Hideable Sidebar
+// @name         New Sidebar
 // @namespace    http://tampermonkey.net/
 // @version      1.0
 // @description  Highlights the active lobby nav item and adds a hideable sidebar.
