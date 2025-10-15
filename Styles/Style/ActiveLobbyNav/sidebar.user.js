@@ -173,6 +173,18 @@
             return cachedPlayerId;
         }
 
+        // Try to find the player ID on the current page
+        const profileLink = document.querySelector('a[href*="/user/"]');
+        if (profileLink) {
+            const match = profileLink.href.match(/\/user\/(\d+)/);
+            if (match && match[1]) {
+                const playerId = match[1];
+                localStorage.setItem('playcs_playerId', playerId);
+                return playerId;
+            }
+        }
+
+        // Fallback to fetching the profile page
         try {
             const response = await fetch('https://play-cs.com/en/profile');
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -232,7 +244,7 @@
         const serverCard = document.querySelector('.lobby3-server-card');
         if (serverCard) {
             const playerInfoDiv = document.createElement('div');
-            playerInfoDiv.style.padding = '10px';
+            playerInfoDiv.style.marginTop = '10px';
             playerInfoDiv.innerHTML = `
                 <span class="main-info-middle-userdata__mmr">
                     <a href="/rating/search/${playerId}" style="color: #91ff08;">
