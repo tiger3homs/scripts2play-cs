@@ -2,10 +2,10 @@ import csv
 import requests
 import json
 
-SHEETDB_API_URL = 'https://sheetdb.io/api/v1/sxjqnb3dfoyia'
+SHEETDB_API_URL = 'https://sheetdb.io/api/v1/ns7qvap70vf6g'
 
 data_to_send = []
-with open('match_data.csv', mode='r', encoding='utf-8') as csv_file:
+with open('scoreboard/blah/match_data.csv', mode='r', encoding='utf-8') as csv_file:
     csv_reader = csv.DictReader(csv_file)
     for row in csv_reader:
         data_to_send.append(row)
