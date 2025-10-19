@@ -104,11 +104,14 @@
                 if (cols.length < 5) return;
 
                 let rawName = cols[1]?.innerText.trim() || "Unknown";
+                let cleanedName = rawName.replace(/^(\[.*?\]|<.*?>|\(.*?\))\s*/, '').trim() || rawName;
                 let countryCode = (cols[1]?.querySelector(".flag-icon")?.classList.value.match(/flag-icon-([a-z]{2})/)?.[1] || "").toUpperCase();
                 let kills = parseInt(cols[3]?.innerText, 10) || 0;
                 let deaths = parseInt(cols[4]?.innerText, 10) || 0;
 
-                players.push({ name: rawName, kills, deaths, flag: c2e(countryCode), team });
+                if (kills > 0 || deaths > 0) {
+                    players.push({ name: cleanedName, kills, deaths, flag: c2e(countryCode), team });
+                }
             });
             return players;
         };
