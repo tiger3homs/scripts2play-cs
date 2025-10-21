@@ -2,7 +2,7 @@ import csv
 import requests
 import json
 
-SHEETDB_API_URL = 'https://sheetdb.io/api/v1/ns7qvap70vf6g'
+SHEETDB_API_URL = 'https://sheetdb.io/api/v1/'
 
 data_to_send = []
 with open('scoreboard/blah/match_data.csv', mode='r', encoding='utf-8') as csv_file:
