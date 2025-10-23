@@ -1,0 +1,1104 @@
+<div id="my-servers-tab" class="tab-pane active">
+
+<div id="server_players_list">
+    <span id="room_id"></span>
+    Server <span id="port" class="cvar-name"></span> players list:<br>
+    <div class="no_players">No players on the server!</div>
+    <div class="players_list">
+    </div>
+    <br>
+    <span class="info">Kick will also ban player for 15 minutes.</span><br>
+    <span class="info">Ban will kick and ban player for a permanent time.</span><br>
+    <button class="close save-btn admin_add_button"><i class="fa fa-times" aria-hidden="true"></i> Close</button>
+    <button class="refresh save-btn admin_add_button"><i class="fa fa-refresh" aria-hidden="true"></i><i class="fa fa-spinner fa-spin" aria-hidden="true"></i> Refresh</button>
+    <i id="close_top" class="close fa fa-times" aria-hidden="true" alt="Close" title="Close"></i>
+</div>
+
+<div id="server_bans_list">
+    <span id="room_id"></span>
+    Server <span id="port" class="cvar-name"></span> bans list:<br>
+    <div class="no_players">No bans on the server!</div>
+    <div class="players_list">
+    </div>
+    <br>
+    <button class="close save-btn admin_add_button"><i class="fa fa-times" aria-hidden="true"></i> Close</button>
+    <button class="refresh save-btn admin_add_button"><i class="fa fa-refresh" aria-hidden="true"></i><i class="fa fa-spinner fa-spin" aria-hidden="true"></i> Refresh</button>
+    <i id="close_top" class="close fa fa-times" aria-hidden="true" alt="Close" title="Close"></i>
+</div>
+
+<div class="article-container">
+
+
+<div class="myservers-layout">
+    <section class="myservers-card myservers-card--new">
+        <div class="myservers-card__header">
+            <h3>New server</h3>
+        </div>
+        <div class="myservers-card__body">
+            <form id="new-server-form" class="myservers-form">
+                <div class="myservers-form__row">
+                    <span class="myservers-form__label">Server</span>
+                    <div class="myservers-form__field">
+                        <select id="new-server-tariff" name="server" class="input_dark">
+                                                                                            <option value="minimal">Private Mini, 6 players (7 Gold) </option>
+                                                                                            <option value="standart">Private, 12 players (14 Gold) </option>
+                                                                                            <option value="ultra">Private Plus, 20 players (18 Gold) -5%</option>
+                                                    </select>
+                    </div>
+                </div>
+                <div class="myservers-form__row myservers-form__row--actions">
+                    <button type="submit" class="save-btn2 myservers-submit">
+                        <i class="fa fa-shopping-basket" aria-hidden="true"></i>
+                        <span>Make order</span>
+                    </button>
+                </div>
+            </form>
+            <div class="myservers-balance">
+                <span class="myservers-balance__label">Your balance:</span>
+                <b class="gold-color">0 Gold</b>
+                <a class="myservers-balance__link" href="/gold">Top up your balance here</a>
+            </div>
+                            <div class="myservers-overview">
+                    <div class="myservers-overview__item">
+                        <span class="myservers-overview__label">Active servers</span>
+                        <span class="myservers-overview__value">1</span>
+                        <span class="myservers-overview__meta">20 slots</span>
+                    </div>
+                    <div class="myservers-overview__item">
+                        <span class="myservers-overview__label">Online players</span>
+                        <span class="myservers-overview__value">0</span>
+                        <span class="myservers-overview__meta">On servers: 0</span>
+                    </div>
+                    <div class="myservers-overview__item">
+                        <span class="myservers-overview__label">Next payment</span>
+                        <span class="myservers-overview__value">06.11.2025</span>
+                        <span class="myservers-overview__meta">
+                                                            All servers paid                                                    </span>
+                    </div>
+                </div>
+                                        <div class="myservers-quick-actions">
+                    <div class="myservers-quick-actions__header">
+                        <h4>Quick controls</h4>
+                        <span>Manage your most active servers without scrolling</span>
+                    </div>
+                    <div class="myservers-quick-actions__list">
+                                                                                <div class="myservers-quick-actions__item">
+                                <div class="myservers-quick-actions__info">
+                                    <span class="myservers-quick-actions__name">[LUX] DRAGON    </span>
+                                    <span class="myservers-quick-actions__status">
+                                        #27080 · 0/20 · de_inferno                                    </span>
+                                    <span class="myservers-quick-actions__paid">
+                                        Paid until: 06.11.2025</span>
+                                </div>
+                                <div class="myservers-quick-actions__buttons">
+                                    <button type="button" class="myservers-quick-actions__btn" onclick="server_reboot(this, 4451)" disabled="">
+                                        <i class="fa fa-power-off" aria-hidden="true"></i>
+                                        <span>Reboot</span>
+                                    </button>
+                                    <button type="button" class="myservers-quick-actions__btn" onclick="restart_round(this, 4451)" disabled="">
+                                        <i class="fa fa-refresh" aria-hidden="true"></i>
+                                        <span>Restart round</span>
+                                    </button>
+                                </div>
+                            </div>
+                                            </div>
+                </div>
+                    </div>
+    </section>
+
+    <section class="myservers-card myservers-card--specs">
+        <div class="myservers-card__header">
+            <h3>Specifications</h3>
+        </div>
+        <div class="myservers-card__body myservers-card__body--specs">
+            
+        <ul id="myservers_description">
+            <li>📍 Server Owner (first who rent) 🦸 can add maximum 10 helpers 🥳 (admins).</li>
+            <li class="premium-color">📍 Every Server Rent or Prolong operation (helpers can extend too) will give U 1 week of Premium and 200 Cash for free. 🎁</li>
+            <li>📍 Server owner and helpers 🦸 always have bonus slot so he can play at anytime (even when server is full).</li>
+            <li>📍 You can Choose a Server Location (and later owner can always change location) of Rented Server 💻 from countries:<br> Europe: <span class="flag-icon flag-icon-de" alt="Europe" title="Europe"></span> <span class="flag-icon flag-icon-ru" alt="Russia" title="Russia"></span> America: <span class="flag-icon flag-icon-br" alt="South America (Brasil)" title="South America (Brasil)"></span> <span class="flag-icon flag-icon-us" alt="USA (New York City)" title="USA (New York City)"></span> Asia: <span class="flag-icon flag-icon-sg" alt="Asia (Singapore)" title="Asia (Singapore)"></span>
+            </li>
+            <br>
+            <li style="color: #0ad2ff;">Server Owner 🦸 and Helpers 🥳 can always:</li>
+            <li>📍 Protect server with a Pincode. 🔒</li>
+            <li>📍 Kick and ban ☠ players for 15 minutes.</li>
+            <li>📍 Restrict any weapon 🔫 on a server</li>
+            <li>📍 Enable bots 🤖 on server to fill it up to 4 players. <a href="/bots" target="_BLANK">Maps with bots.</a></li>
+            <li>📍 Change available settings (cvars): <span class="cvar-name">mp_registered</span>, <span class="cvar-name">mp_clanwar</span>, <span class="cvar-name">nobombscore_enabled</span>, <span class="cvar-name">amx_giveammo</span>, <span class="cvar-name">mp_friendlyfire</span>, <span class="cvar-name">semiclip</span>, <span class="cvar-name">mp_autoteambalance</span>, <span class="cvar-name">mp_afkbomb</span>, <span class="cvar-name">mp_restarter</span>, <span class="cvar-name">mp_rs_rounds</span>, <span class="cvar-name">mp_flashlight</span>, <span class="cvar-name">afk_kick</span>, <span class="cvar-name">pb_maxbots</span>, <span class="cvar-name">perks</span>, <span class="cvar-name">statistics</span>, <span class="cvar-name">chickens</span>, <span class="cvar-name">streak</span>, <span class="cvar-name">lastman</span>, <span class="cvar-name">grenades_trails</span>, <span class="cvar-name">rnd_death</span>, <span class="cvar-name">votekick</span>, <span class="cvar-name">bonus_slot</span>, <span class="cvar-name">tfb</span>, <span class="cvar-name">statsx</span>, <span class="cvar-name">dib3</span>, <span class="cvar-name">mp_antidoubleduck</span>, <span class="cvar-name">rwd_grenadedrop</span>, <span class="cvar-name">minimal_skill</span>, <span class="cvar-name">ping_limit</span>, <span class="cvar-name">mp_roundtime</span>, <span class="cvar-name">mp_buytime</span>, <span class="cvar-name">mp_c4timer</span>, <span class="cvar-name">mp_freezetime</span>, <span class="cvar-name">mp_startmoney</span>, <span class="cvar-name">csem_sank_cd</span>, <span class="cvar-name">limit_hegren</span>, <span class="cvar-name">limit_sgren</span>, <span class="cvar-name">limit_flash</span>.
+            </li>
+            <li>📍 Select from available maps: (can be extended by request) </li>
+        </ul>        </div>
+    </section>
+
+        <section class="myservers-card myservers-card--list">
+        <div class="myservers-card__header">
+            <h3>Your Servers</h3>
+        </div>
+        <div class="myservers-card__body">
+            <form id="my-servers-form" class="myservers-table-form">
+                <div class="myservers-table-scroll">
+                    <table class="table myservers-table">
+        <thead>
+        <tr>
+            <th>Enabled</th>
+            <th>Name</th>
+            <th colspan="2">Map</th>
+            <th>Players (Paid until)</th>
+            <th class="capitalize">Visible</th>
+            <th>Game link</th>
+        </tr>
+        </thead>
+        <tbody>
+                                <tr class="myserver" data-server="4451">
+                <td class="myservers-table__cell myservers-table__cell--enabled" data-label="Enabled"><button type="button" class="myserver-toggle-btn" aria-label="Toggle server details" aria-expanded="true"><span class="myserver-collapse-icon" aria-hidden="true">▾</span></button>
+                    <i class="fa fa-power-off" aria-hidden="true"></i>
+                    <input disabled="" name="server[4451][enabled]" id="server[4451][enabled]" type="checkbox" checked="" value="1">
+                    <label for="server[4451][enabled]">
+                        <span></span>
+                    </label>
+                </td>
+                <td class="myservers-table__cell myservers-table__cell--name" data-label="Name">
+                    <input disabled="" name="server[4451][name]" value="[LUX] DRAGON    ">
+                </td>
+                <td class="myservers-table__cell myservers-table__cell--map" colspan="2" data-label="Map">
+                    <div class="map-search-wrapper"><input type="text" class="map-search-input" placeholder="Search maps..."><div class="map-search-dropdown"><button type="button" class="map-search-option" data-value="35hp_2">35hp_2</button></div><select name="server[4451][map]" data-enhanced="true" class="map-search-select-hidden">
+                                                                                <option>
+                                35hp_2                            </option>
+                                            </select></div>
+                </td>
+                                <td class="myservers-table__cell myservers-table__cell--players" data-label="Players / Paid until">
+                    0 / 20 (2025-11-06)
+                </td>
+                <td class="myservers-table__cell myservers-table__cell--visibility" data-label="Visible">
+                                            <i class="fa fa-eye" aria-hidden="true"></i>
+                        <input disabled="" type="checkbox" name="server[4451][public]" id="server[4451][public]" value="1">
+                        <label for="server[4451][public]">
+                            <span></span>
+                        </label>
+                                    </td>
+                <td id="my-server-4451" class="myservers-table__cell myservers-table__cell--link" data-label="Game link">
+                                        <a target="_blank" href="https://play-cs.com/play/27080/de" style="color: white; text-decoration: underline">https://play-cs.com/play/27080/de</a>
+                </td>
+            </tr>
+            <tr class="myserver-details">
+                <td class="myserver myservers-table__cell myservers-table__cell--country" colspan="3" data-label="Country"><i class="fa fa-globe" aria-hidden="true"></i>
+                    <select name="server[4451][country]">
+                        <option value="de" selected="">Europe</option><option value="ru">Russia</option><option value="br">South America (Brasil)</option><option value="ny">USA (New York City)</option><option value="sg">Asia (Singapore)</option>                    </select>
+                </td>
+                <td class="myserver myservers-table__cell myservers-table__cell--billing" colspan="2" data-label="Payments">
+                    <div class="save-btn2" onclick="prolongServer(4451)">
+                        Prolong for 18 Gold
+                    </div><br><br>
+                     <div class="save-btn2" onclick="promoteServer(4451, 1)">
+                        Promote for 1 day: 1 Gold
+                     </div><br>
+                     <div class="save-btn2" onclick="promoteServer(4451, 7)">
+                        Promote for 1 week: 4 Gold
+                    </div><br>
+                                    </td>
+                <td class="myserver myservers-table__cell myservers-table__cell--pin" colspan="2" align="right" data-label="PIN">
+                    <span class="cvar-name"><i class="fa fa-lock" aria-hidden="true" style="font-size: 1.2em;"></i> PIN</span>: <input type="text" class="pin_code_input" id="pin_4451" name="pin_4451" placeholder="4 symbols" maxlength="4" size="16" value="gang">
+                    <div class="save-btn admin_add_button capitalize" id="pin_add_button_4451" onclick="pin_add(4451);"><i class="fa fa-spinner fa-pulse" style="display: none" id="pin_add_spinner_4451"></i><i class="fa fa-check" style="display: none; color: #97b124;" id="pin_add_check_4451"></i> Set up PIN</div>
+                    <div class="save-btn admin_add_button capitalize" id="pin_remove_button_4451" onclick="pin_delete(4451);"><i class="fa fa-spinner fa-pulse" style="display: none" id="pin_delete_spinner_4451"></i><i class="fa fa-check" style="display: none; color: #97b124;" id="pin_delete_check_4451"></i> Unset PIN</div>
+                </td>
+            </tr>
+            <tr class="myserver-details">
+                <td class="myserver myservers-table__cell" data-label=""></td>
+                <td class="my-server-cvars myservers-table__cell myservers-table__cell--settings" colspan="4" data-label="Settings"><div class="mode-presets"><span class="mode-presets__label">Mode presets:</span><button type="button" class="mode-presets__button">Public</button><button type="button" class="mode-presets__button">5v5</button><button type="button" class="mode-presets__button">Deathmatch</button></div>
+                    <table>
+                        <tbody><tr class="cvars-table">
+                            <td colspan="2">
+                                CVAR
+                            </td>
+                            <td align="center">
+                                Description                            </td>
+                        </tr>
+                                                    <tr>
+                                <td class="cvar-name">
+                                                                                                                    <input type="checkbox" name="server[4451][cvars][mp_registered]" id="server[4451][cvars][mp_registered]">
+                                        <label for="server[4451][cvars][mp_registered]">
+                                            <span></span>
+                                        </label>
+                                        <label for="server[4451][cvars][mp_registered]">
+                                             Registered                                        </label>
+                                                                    </td>
+                                <td>
+                                    &nbsp;
+                                </td>
+                                <td class="cvar-description">
+                                    <label for="server[4451][cvars][mp_registered]">
+                                        Only Registered players can play at server. (<span>mp_registered</span>)
+                                    </label>
+                                                                                                                                            </td>
+                            </tr>
+                                                    <tr>
+                                <td class="cvar-name">
+                                                                                                                    <input checked="" type="checkbox" name="server[4451][cvars][mp_clanwar]" id="server[4451][cvars][mp_clanwar]">
+                                        <label for="server[4451][cvars][mp_clanwar]">
+                                            <span></span>
+                                        </label>
+                                        <label for="server[4451][cvars][mp_clanwar]">
+                                             ClanWar                                        </label>
+                                                                    </td>
+                                <td>
+                                    &nbsp;
+                                </td>
+                                <td class="cvar-description">
+                                    <label for="server[4451][cvars][mp_clanwar]">
+                                        Simple CW helper. Say /cwhelp in chat for help. (<span>mp_clanwar</span>)
+                                    </label>
+                                                                                                                                                                                            <i class="fa fa-question-circle-o cvar-name" aria-hidden="true" title="Can be enabled on maps: de_dust2, de_dust, de_nuke, de_train, de_overpass_v2, de_mirage, de_tuscan, de_inferno, de_cache_v2." alt="Can be enabled on maps: de_dust2, de_dust, de_nuke, de_train, de_overpass_v2, de_mirage, de_tuscan, de_inferno, de_cache_v2."></i>
+                                                                    </td>
+                            </tr>
+                                                    <tr>
+                                <td class="cvar-name">
+                                                                                                                    <input checked="" type="checkbox" name="server[4451][cvars][nobombscore_enabled]" id="server[4451][cvars][nobombscore_enabled]">
+                                        <label for="server[4451][cvars][nobombscore_enabled]">
+                                            <span></span>
+                                        </label>
+                                        <label for="server[4451][cvars][nobombscore_enabled]">
+                                             No Bomb Score                                        </label>
+                                                                    </td>
+                                <td>
+                                    &nbsp;
+                                </td>
+                                <td class="cvar-description">
+                                    <label for="server[4451][cvars][nobombscore_enabled]">
+                                        Players wont get score for planting / defusing the bomb. (<span>nobombscore_enabled</span>)
+                                    </label>
+                                                                                                                                                        <i class="fa fa-question-circle-o cvar-name" aria-hidden="true" title="Can't be enabled on maps: ^cs, fy, aim, surf, gg, he, ffa, bhop, dr, br, hns, ka, lobby, training." alt="Can't be enabled on maps: ^cs, fy, aim, surf, gg, he, ffa, bhop, dr, br, hns, ka, lobby, training."></i>
+                                                                                                        </td>
+                            </tr>
+                                                    <tr>
+                                <td class="cvar-name">
+                                                                                                                    <input type="checkbox" name="server[4451][cvars][amx_giveammo]" id="server[4451][cvars][amx_giveammo]">
+                                        <label for="server[4451][cvars][amx_giveammo]">
+                                            <span></span>
+                                        </label>
+                                        <label for="server[4451][cvars][amx_giveammo]">
+                                            Free Ammo                                        </label>
+                                                                    </td>
+                                <td>
+                                    &nbsp;
+                                </td>
+                                <td class="cvar-description">
+                                    <label for="server[4451][cvars][amx_giveammo]">
+                                        Free ammo for everyone every round. (<span>amx_giveammo</span>)
+                                    </label>
+                                                                                                                                                        <i class="fa fa-question-circle-o cvar-name" aria-hidden="true" title="Can't be enabled on maps: gg, ffa, bhop, dm." alt="Can't be enabled on maps: gg, ffa, bhop, dm."></i>
+                                                                                                        </td>
+                            </tr>
+                                                    <tr>
+                                <td class="cvar-name">
+                                                                                                                    <input checked="" type="checkbox" name="server[4451][cvars][mp_friendlyfire]" id="server[4451][cvars][mp_friendlyfire]">
+                                        <label for="server[4451][cvars][mp_friendlyfire]">
+                                            <span></span>
+                                        </label>
+                                        <label for="server[4451][cvars][mp_friendlyfire]">
+                                            Friendly Fire                                        </label>
+                                                                    </td>
+                                <td>
+                                    &nbsp;
+                                </td>
+                                <td class="cvar-description">
+                                    <label for="server[4451][cvars][mp_friendlyfire]">
+                                        Ability to kill teammates (<span>mp_friendlyfire</span>)
+                                    </label>
+                                                                                                                                                        <i class="fa fa-question-circle-o cvar-name" aria-hidden="true" title="Can't be enabled on maps: gg, ffa, bhop." alt="Can't be enabled on maps: gg, ffa, bhop."></i>
+                                                                                                        </td>
+                            </tr>
+                                                    <tr>
+                                <td class="cvar-name">
+                                                                                                                    <input type="checkbox" name="server[4451][cvars][semiclip]" id="server[4451][cvars][semiclip]">
+                                        <label for="server[4451][cvars][semiclip]">
+                                            <span></span>
+                                        </label>
+                                        <label for="server[4451][cvars][semiclip]">
+                                            Team Noblock                                        </label>
+                                                                    </td>
+                                <td>
+                                    &nbsp;
+                                </td>
+                                <td class="cvar-description">
+                                    <label for="server[4451][cvars][semiclip]">
+                                        Ability to pass through teammates (<span>semiclip</span>)
+                                    </label>
+                                                                                                                                                        <i class="fa fa-question-circle-o cvar-name" aria-hidden="true" title="Can't be enabled on maps: gg, ffa, bhop, awp, surf, 35hp, dm." alt="Can't be enabled on maps: gg, ffa, bhop, awp, surf, 35hp, dm."></i>
+                                                                                                        </td>
+                            </tr>
+                                                    <tr>
+                                <td class="cvar-name">
+                                                                                                                    <input type="checkbox" name="server[4451][cvars][mp_autoteambalance]" id="server[4451][cvars][mp_autoteambalance]">
+                                        <label for="server[4451][cvars][mp_autoteambalance]">
+                                            <span></span>
+                                        </label>
+                                        <label for="server[4451][cvars][mp_autoteambalance]">
+                                            Team Balance                                        </label>
+                                                                    </td>
+                                <td>
+                                    &nbsp;
+                                </td>
+                                <td class="cvar-description">
+                                    <label for="server[4451][cvars][mp_autoteambalance]">
+                                        Autobalance number of team players (<span>mp_autoteambalance</span>)
+                                    </label>
+                                                                                                                                                        <i class="fa fa-question-circle-o cvar-name" aria-hidden="true" title="Can't be enabled on maps: gg, ffa, bhop, dm." alt="Can't be enabled on maps: gg, ffa, bhop, dm."></i>
+                                                                                                        </td>
+                            </tr>
+                                                    <tr>
+                                <td class="cvar-name">
+                                                                                                                    <input type="checkbox" name="server[4451][cvars][mp_afkbomb]" id="server[4451][cvars][mp_afkbomb]">
+                                        <label for="server[4451][cvars][mp_afkbomb]">
+                                            <span></span>
+                                        </label>
+                                        <label for="server[4451][cvars][mp_afkbomb]">
+                                            Bomb Drop                                        </label>
+                                                                    </td>
+                                <td>
+                                    &nbsp;
+                                </td>
+                                <td class="cvar-description">
+                                    <label for="server[4451][cvars][mp_afkbomb]">
+                                        Drop bomb if player 20 sec AFK (Only DE maps) (<span>mp_afkbomb</span>)
+                                    </label>
+                                                                                                                                            </td>
+                            </tr>
+                                                    <tr>
+                                <td class="cvar-name">
+                                                                                                                    <input type="checkbox" name="server[4451][cvars][mp_restarter]" id="server[4451][cvars][mp_restarter]">
+                                        <label for="server[4451][cvars][mp_restarter]">
+                                            <span></span>
+                                        </label>
+                                        <label for="server[4451][cvars][mp_restarter]">
+                                            Auto Restart                                        </label>
+                                                                    </td>
+                                <td>
+                                    &nbsp;
+                                </td>
+                                <td class="cvar-description">
+                                    <label for="server[4451][cvars][mp_restarter]">
+                                        Auto restart server every 100 rounds. You can change it. (<span>mp_restarter</span>)
+                                    </label>
+                                                                                                                                            </td>
+                            </tr>
+                                                    <tr>
+                                <td class="cvar-name">
+                                                                            Rounds Auto Restart                                        <select name="server[4451][cvars][mp_rs_rounds]">
+                                                                                                                                            <option value="25" selected="">25</option>
+                                                                                                                                            <option value="50">50</option>
+                                                                                                                                            <option value="75">75</option>
+                                                                                                                                            <option value="100">100</option>
+                                                                                                                                            <option value="125">125</option>
+                                                                                                                                            <option value="150">150</option>
+                                                                                                                                            <option value="200">200</option>
+                                                                                    </select>
+                                                                    </td>
+                                <td>
+                                    &nbsp;
+                                </td>
+                                <td class="cvar-description">
+                                    <label for="server[4451][cvars][mp_rs_rounds]">
+                                        You can change here rounds amount for Auto Restart. (<span>mp_rs_rounds</span>)
+                                    </label>
+                                                                                                                                            </td>
+                            </tr>
+                                                    <tr>
+                                <td class="cvar-name">
+                                                                                                                    <input type="checkbox" name="server[4451][cvars][mp_flashlight]" id="server[4451][cvars][mp_flashlight]">
+                                        <label for="server[4451][cvars][mp_flashlight]">
+                                            <span></span>
+                                        </label>
+                                        <label for="server[4451][cvars][mp_flashlight]">
+                                            Flashlight                                        </label>
+                                                                    </td>
+                                <td>
+                                    &nbsp;
+                                </td>
+                                <td class="cvar-description">
+                                    <label for="server[4451][cvars][mp_flashlight]">
+                                        Giving a flashlight to all players (<span>mp_flashlight</span>)
+                                    </label>
+                                                                                                                                            </td>
+                            </tr>
+                                                    <tr>
+                                <td class="cvar-name">
+                                                                                                                    <input type="checkbox" name="server[4451][cvars][afk_kick]" id="server[4451][cvars][afk_kick]">
+                                        <label for="server[4451][cvars][afk_kick]">
+                                            <span></span>
+                                        </label>
+                                        <label for="server[4451][cvars][afk_kick]">
+                                            AFK Kick                                        </label>
+                                                                    </td>
+                                <td>
+                                    &nbsp;
+                                </td>
+                                <td class="cvar-description">
+                                    <label for="server[4451][cvars][afk_kick]">
+                                        AFK kick (<span>afk_kick</span>)
+                                    </label>
+                                                                                                                                            </td>
+                            </tr>
+                                                    <tr>
+                                <td class="cvar-name">
+                                                                            Bots                                        <select name="server[4451][cvars][pb_maxbots]">
+                                                                                                                                            <option value="0" selected="">0</option>
+                                                                                                                                            <option value="1">1</option>
+                                                                                                                                            <option value="2">2</option>
+                                                                                                                                            <option value="3">3</option>
+                                                                                                                                            <option value="4">4</option>
+                                                                                                                                            <option value="5">5</option>
+                                                                                                                                            <option value="6">6</option>
+                                                                                    </select>
+                                                                    </td>
+                                <td>
+                                    &nbsp;
+                                </td>
+                                <td class="cvar-description">
+                                    <label for="server[4451][cvars][pb_maxbots]">
+                                        Filling the server with bots up to 6 players (<span>pb_maxbots</span>)
+                                    </label>
+                                                                                                                                            </td>
+                            </tr>
+                                                    <tr>
+                                <td class="cvar-name">
+                                                                                                                    <input type="checkbox" name="server[4451][cvars][perks]" id="server[4451][cvars][perks]">
+                                        <label for="server[4451][cvars][perks]">
+                                            <span></span>
+                                        </label>
+                                        <label for="server[4451][cvars][perks]">
+                                            Perks                                        </label>
+                                                                    </td>
+                                <td>
+                                    &nbsp;
+                                </td>
+                                <td class="cvar-description">
+                                    <label for="server[4451][cvars][perks]">
+                                        Perks system (<span>perks</span>)
+                                    </label>
+                                                                                                                                                        <i class="fa fa-question-circle-o cvar-name" aria-hidden="true" title="Can't be enabled on maps: gg, ffa, bhop, awp, surf, 35hp, dm." alt="Can't be enabled on maps: gg, ffa, bhop, awp, surf, 35hp, dm."></i>
+                                                                                                        </td>
+                            </tr>
+                                                    <tr>
+                                <td class="cvar-name">
+                                                                                                                    <input type="checkbox" name="server[4451][cvars][statistics]" id="server[4451][cvars][statistics]">
+                                        <label for="server[4451][cvars][statistics]">
+                                            <span></span>
+                                        </label>
+                                        <label for="server[4451][cvars][statistics]">
+                                            Statistics                                        </label>
+                                                                    </td>
+                                <td>
+                                    &nbsp;
+                                </td>
+                                <td class="cvar-description">
+                                    <label for="server[4451][cvars][statistics]">
+                                        Statistics counting (<span>statistics</span>)
+                                    </label>
+                                                                            <i class="fa fa-users notice" aria-hidden="true"></i>
+                                                                                                                                                        <i class="fa fa-question-circle-o cvar-name" aria-hidden="true" title="Can't be enabled on maps: ^fy, aim, surf, gg, he, ffa, bhop, dr, br, hns, ka, dm, lobby, training, cs_untitled, cs_16figher." alt="Can't be enabled on maps: ^fy, aim, surf, gg, he, ffa, bhop, dr, br, hns, ka, dm, lobby, training, cs_untitled, cs_16figher."></i>
+                                                                                                        </td>
+                            </tr>
+                                                    <tr>
+                                <td class="cvar-name">
+                                                                                                                    <input type="checkbox" name="server[4451][cvars][chickens]" id="server[4451][cvars][chickens]">
+                                        <label for="server[4451][cvars][chickens]">
+                                            <span></span>
+                                        </label>
+                                        <label for="server[4451][cvars][chickens]">
+                                            Chickens                                        </label>
+                                                                    </td>
+                                <td>
+                                    &nbsp;
+                                </td>
+                                <td class="cvar-description">
+                                    <label for="server[4451][cvars][chickens]">
+                                        Server spawning Cash-giving chickens (<span>chickens</span>)
+                                    </label>
+                                                                                                                                            </td>
+                            </tr>
+                                                    <tr>
+                                <td class="cvar-name">
+                                                                                                                    <input type="checkbox" name="server[4451][cvars][streak]" id="server[4451][cvars][streak]">
+                                        <label for="server[4451][cvars][streak]">
+                                            <span></span>
+                                        </label>
+                                        <label for="server[4451][cvars][streak]">
+                                            Streak Sounds                                        </label>
+                                                                    </td>
+                                <td>
+                                    &nbsp;
+                                </td>
+                                <td class="cvar-description">
+                                    <label for="server[4451][cvars][streak]">
+                                        Sounds of streak kill (<span>streak</span>)
+                                    </label>
+                                                                                                                                            </td>
+                            </tr>
+                                                    <tr>
+                                <td class="cvar-name">
+                                                                                                                    <input type="checkbox" name="server[4451][cvars][lastman]" id="server[4451][cvars][lastman]">
+                                        <label for="server[4451][cvars][lastman]">
+                                            <span></span>
+                                        </label>
+                                        <label for="server[4451][cvars][lastman]">
+                                            Last Man Sound                                        </label>
+                                                                    </td>
+                                <td>
+                                    &nbsp;
+                                </td>
+                                <td class="cvar-description">
+                                    <label for="server[4451][cvars][lastman]">
+                                        Sound when one player left alive (<span>lastman</span>)
+                                    </label>
+                                                                                                                                            </td>
+                            </tr>
+                                                    <tr>
+                                <td class="cvar-name">
+                                                                                                                    <input type="checkbox" name="server[4451][cvars][grenades_trails]" id="server[4451][cvars][grenades_trails]">
+                                        <label for="server[4451][cvars][grenades_trails]">
+                                            <span></span>
+                                        </label>
+                                        <label for="server[4451][cvars][grenades_trails]">
+                                            Grenades Trails                                        </label>
+                                                                    </td>
+                                <td>
+                                    &nbsp;
+                                </td>
+                                <td class="cvar-description">
+                                    <label for="server[4451][cvars][grenades_trails]">
+                                        Colored grenades trails (<span>grenades_trails</span>)
+                                    </label>
+                                                                                                                                            </td>
+                            </tr>
+                                                    <tr>
+                                <td class="cvar-name">
+                                                                                                                    <input type="checkbox" name="server[4451][cvars][rnd_death]" id="server[4451][cvars][rnd_death]">
+                                        <label for="server[4451][cvars][rnd_death]">
+                                            <span></span>
+                                        </label>
+                                        <label for="server[4451][cvars][rnd_death]">
+                                            Drop Grenades                                        </label>
+                                                                    </td>
+                                <td>
+                                    &nbsp;
+                                </td>
+                                <td class="cvar-description">
+                                    <label for="server[4451][cvars][rnd_death]">
+                                        Drop grenades when a player dies (<span>rnd_death</span>)
+                                    </label>
+                                                                                                                                            </td>
+                            </tr>
+                                                    <tr>
+                                <td class="cvar-name">
+                                                                                                                    <input type="checkbox" name="server[4451][cvars][votekick]" id="server[4451][cvars][votekick]">
+                                        <label for="server[4451][cvars][votekick]">
+                                            <span></span>
+                                        </label>
+                                        <label for="server[4451][cvars][votekick]">
+                                            Vote kick/ban                                        </label>
+                                                                    </td>
+                                <td>
+                                    &nbsp;
+                                </td>
+                                <td class="cvar-description">
+                                    <label for="server[4451][cvars][votekick]">
+                                        Voting system (<span>votekick</span>)
+                                    </label>
+                                                                                                                                            </td>
+                            </tr>
+                                                    <tr>
+                                <td class="cvar-name">
+                                                                                                                    <input checked="" type="checkbox" name="server[4451][cvars][bonus_slot]" id="server[4451][cvars][bonus_slot]">
+                                        <label for="server[4451][cvars][bonus_slot]">
+                                            <span></span>
+                                        </label>
+                                        <label for="server[4451][cvars][bonus_slot]">
+                                            Bonus slots                                        </label>
+                                                                    </td>
+                                <td>
+                                    &nbsp;
+                                </td>
+                                <td class="cvar-description">
+                                    <label for="server[4451][cvars][bonus_slot]">
+                                        Bonus slots for premium users, which can fill server up to 32 players (<span>bonus_slot</span>)
+                                    </label>
+                                                                                                                                            </td>
+                            </tr>
+                                                    <tr>
+                                <td class="cvar-name">
+                                                                                                                    <input type="checkbox" name="server[4451][cvars][tfb]" id="server[4451][cvars][tfb]">
+                                        <label for="server[4451][cvars][tfb]">
+                                            <span></span>
+                                        </label>
+                                        <label for="server[4451][cvars][tfb]">
+                                            Team Flash Blocker                                        </label>
+                                                                    </td>
+                                <td>
+                                    &nbsp;
+                                </td>
+                                <td class="cvar-description">
+                                    <label for="server[4451][cvars][tfb]">
+                                        Players will not flash teammates (<span>tfb</span>)
+                                    </label>
+                                                                                                                                            </td>
+                            </tr>
+                                                    <tr>
+                                <td class="cvar-name">
+                                                                                                                    <input type="checkbox" name="server[4451][cvars][statsx]" id="server[4451][cvars][statsx]">
+                                        <label for="server[4451][cvars][statsx]">
+                                            <span></span>
+                                        </label>
+                                        <label for="server[4451][cvars][statsx]">
+                                            End Round Stats                                        </label>
+                                                                    </td>
+                                <td>
+                                    &nbsp;
+                                </td>
+                                <td class="cvar-description">
+                                    <label for="server[4451][cvars][statsx]">
+                                        Show kill and round end stats (<span>statsx</span>)
+                                    </label>
+                                                                                                                                            </td>
+                            </tr>
+                                                    <tr>
+                                <td class="cvar-name">
+                                                                                                                    <input type="checkbox" name="server[4451][cvars][dib3]" id="server[4451][cvars][dib3]">
+                                        <label for="server[4451][cvars][dib3]">
+                                            <span></span>
+                                        </label>
+                                        <label for="server[4451][cvars][dib3]">
+                                            Death Beams                                        </label>
+                                                                    </td>
+                                <td>
+                                    &nbsp;
+                                </td>
+                                <td class="cvar-description">
+                                    <label for="server[4451][cvars][dib3]">
+                                        Show death beams to victims. Useful for training. (<span>dib3</span>)
+                                    </label>
+                                                                                                                                            </td>
+                            </tr>
+                                                    <tr>
+                                <td class="cvar-name">
+                                                                                                                    <input type="checkbox" name="server[4451][cvars][mp_antidoubleduck]" id="server[4451][cvars][mp_antidoubleduck]">
+                                        <label for="server[4451][cvars][mp_antidoubleduck]">
+                                            <span></span>
+                                        </label>
+                                        <label for="server[4451][cvars][mp_antidoubleduck]">
+                                             Anti Double Duck                                        </label>
+                                                                    </td>
+                                <td>
+                                    &nbsp;
+                                </td>
+                                <td class="cvar-description">
+                                    <label for="server[4451][cvars][mp_antidoubleduck]">
+                                        Removes ability of doubleducking (<span>mp_antidoubleduck</span>)
+                                    </label>
+                                                                                                                                            </td>
+                            </tr>
+                                                    <tr>
+                                <td class="cvar-name">
+                                                                                                                    <input checked="" type="checkbox" name="server[4451][cvars][rwd_grenadedrop]" id="server[4451][cvars][rwd_grenadedrop]">
+                                        <label for="server[4451][cvars][rwd_grenadedrop]">
+                                            <span></span>
+                                        </label>
+                                        <label for="server[4451][cvars][rwd_grenadedrop]">
+                                            Drop grenades                                        </label>
+                                                                    </td>
+                                <td>
+                                    &nbsp;
+                                </td>
+                                <td class="cvar-description">
+                                    <label for="server[4451][cvars][rwd_grenadedrop]">
+                                        Ability to manually drop grenades (<span>rwd_grenadedrop</span>)
+                                    </label>
+                                                                                                                                            </td>
+                            </tr>
+                                                    <tr>
+                                <td class="cvar-name">
+                                                                            Skill limit                                        <select name="server[4451][cvars][minimal_skill]">
+                                                                                                                                            <option value="0" selected="">0</option>
+                                                                                                                                            <option value="100">100</option>
+                                                                                                                                            <option value="200">200</option>
+                                                                                                                                            <option value="300">300</option>
+                                                                                                                                            <option value="400">400</option>
+                                                                                                                                            <option value="500">500</option>
+                                                                                                                                            <option value="600">600</option>
+                                                                                                                                            <option value="700">700</option>
+                                                                                                                                            <option value="800">800</option>
+                                                                                                                                            <option value="900">900</option>
+                                                                                                                                            <option value="1000">1000</option>
+                                                                                                                                            <option value="1200">1200</option>
+                                                                                                                                            <option value="1500">1500</option>
+                                                                                                                                            <option value="2000">2000</option>
+                                                                                                                                            <option value="3000">3000</option>
+                                                                                                                                            <option value="4000">4000</option>
+                                                                                                                                            <option value="5000">5000</option>
+                                                                                                                                            <option value="6000">6000</option>
+                                                                                                                                            <option value="7000">7000</option>
+                                                                                                                                            <option value="8000">8000</option>
+                                                                                                                                            <option value="9000">9000</option>
+                                                                                                                                            <option value="10000">10000</option>
+                                                                                                                                            <option value="12000">12000</option>
+                                                                                                                                            <option value="14000">14000</option>
+                                                                                                                                            <option value="16000">16000</option>
+                                                                                                                                            <option value="18000">18000</option>
+                                                                                                                                            <option value="20000">20000</option>
+                                                                                                                                            <option value="25000">25000</option>
+                                                                                    </select>
+                                                                    </td>
+                                <td>
+                                    &nbsp;
+                                </td>
+                                <td class="cvar-description">
+                                    <label for="server[4451][cvars][minimal_skill]">
+                                        Limit by Skill (<span>minimal_skill</span>)
+                                    </label>
+                                                                                                                                            </td>
+                            </tr>
+                                                    <tr>
+                                <td class="cvar-name">
+                                                                            Ping limit                                        <select name="server[4451][cvars][ping_limit]">
+                                                                                                                                            <option value="100">100</option>
+                                                                                                                                            <option value="150">150</option>
+                                                                                                                                            <option value="200">200</option>
+                                                                                                                                            <option value="300">300</option>
+                                                                                                                                            <option value="400">400</option>
+                                                                                                                                            <option value="500">500</option>
+                                                                                                                                            <option value="600">600</option>
+                                                                                                                                            <option value="700">700</option>
+                                                                                                                                            <option value="800">800</option>
+                                                                                                                                            <option value="900">900</option>
+                                                                                                                                            <option value="1000" selected="">1000</option>
+                                                                                    </select>
+                                                                    </td>
+                                <td>
+                                    &nbsp;
+                                </td>
+                                <td class="cvar-description">
+                                    <label for="server[4451][cvars][ping_limit]">
+                                        Set maximum ping for players (<span>ping_limit</span>)
+                                    </label>
+                                                                                                                                            </td>
+                            </tr>
+                                                    <tr>
+                                <td class="cvar-name">
+                                                                            Round time                                        <select name="server[4451][cvars][mp_roundtime]">
+                                                                                                                                            <option value="1">1</option>
+                                                                                                                                            <option value="1.5">1.5</option>
+                                                                                                                                            <option value="1.75" selected="">1.75</option>
+                                                                                                                                            <option value="2">2</option>
+                                                                                                                                            <option value="2.5">2.5</option>
+                                                                                                                                            <option value="3">3</option>
+                                                                                                                                            <option value="3.5">3.5</option>
+                                                                                                                                            <option value="4">4</option>
+                                                                                                                                            <option value="4.5">4.5</option>
+                                                                                                                                            <option value="5">5</option>
+                                                                                                                                            <option value="5.5">5.5</option>
+                                                                                                                                            <option value="6">6</option>
+                                                                                    </select>
+                                                                    </td>
+                                <td>
+                                    &nbsp;
+                                </td>
+                                <td class="cvar-description">
+                                    <label for="server[4451][cvars][mp_roundtime]">
+                                        Round time in minutes (<span>mp_roundtime</span>)
+                                    </label>
+                                                                                                                                                        <i class="fa fa-question-circle-o cvar-name" aria-hidden="true" title="Can't be enabled on maps: gg, ffa, bhop, dm." alt="Can't be enabled on maps: gg, ffa, bhop, dm."></i>
+                                                                                                        </td>
+                            </tr>
+                                                    <tr>
+                                <td class="cvar-name">
+                                                                            Buy time                                        <select name="server[4451][cvars][mp_buytime]">
+                                                                                                                                            <option value="0">0</option>
+                                                                                                                                            <option value="0.25" selected="">0.25</option>
+                                                                                                                                            <option value="0.5">0.5</option>
+                                                                                                                                            <option value="1">1</option>
+                                                                                                                                            <option value="1.5">1.5</option>
+                                                                                                                                            <option value="2">2</option>
+                                                                                                                                            <option value="2.5">2.5</option>
+                                                                                                                                            <option value="3">3</option>
+                                                                                                                                            <option value="3.5">3.5</option>
+                                                                                                                                            <option value="4">4</option>
+                                                                                                                                            <option value="4.5">4.5</option>
+                                                                                                                                            <option value="5">5</option>
+                                                                                                                                            <option value="5.5">5.5</option>
+                                                                                                                                            <option value="6">6</option>
+                                                                                    </select>
+                                                                    </td>
+                                <td>
+                                    &nbsp;
+                                </td>
+                                <td class="cvar-description">
+                                    <label for="server[4451][cvars][mp_buytime]">
+                                        Buy time in minutes (<span>mp_buytime</span>)
+                                    </label>
+                                                                                                                                                        <i class="fa fa-question-circle-o cvar-name" aria-hidden="true" title="Can't be enabled on maps: gg, ffa, bhop, dm." alt="Can't be enabled on maps: gg, ffa, bhop, dm."></i>
+                                                                                                        </td>
+                            </tr>
+                                                    <tr>
+                                <td class="cvar-name">
+                                                                            C4 timer                                        <select name="server[4451][cvars][mp_c4timer]">
+                                                                                                                                            <option value="35" selected="">35</option>
+                                                                                                                                            <option value="40">40</option>
+                                                                                                                                            <option value="45">45</option>
+                                                                                                                                            <option value="50">50</option>
+                                                                                                                                            <option value="55">55</option>
+                                                                                                                                            <option value="60">60</option>
+                                                                                    </select>
+                                                                    </td>
+                                <td>
+                                    &nbsp;
+                                </td>
+                                <td class="cvar-description">
+                                    <label for="server[4451][cvars][mp_c4timer]">
+                                        C4 timer in seconds (<span>mp_c4timer</span>)
+                                    </label>
+                                                                                                                                                        <i class="fa fa-question-circle-o cvar-name" aria-hidden="true" title="Can't be enabled on maps: gg, ffa, bhop, dm." alt="Can't be enabled on maps: gg, ffa, bhop, dm."></i>
+                                                                                                        </td>
+                            </tr>
+                                                    <tr>
+                                <td class="cvar-name">
+                                                                            Freeze time                                        <select name="server[4451][cvars][mp_freezetime]">
+                                                                                                                                            <option value="0">0</option>
+                                                                                                                                            <option value="1">1</option>
+                                                                                                                                            <option value="2">2</option>
+                                                                                                                                            <option value="3">3</option>
+                                                                                                                                            <option value="4">4</option>
+                                                                                                                                            <option value="5">5</option>
+                                                                                                                                            <option value="6">6</option>
+                                                                                                                                            <option value="7">7</option>
+                                                                                                                                            <option value="8">8</option>
+                                                                                                                                            <option value="9">9</option>
+                                                                                                                                            <option value="10">10</option>
+                                                                                                                                            <option value="11">11</option>
+                                                                                                                                            <option value="12">12</option>
+                                                                                                                                            <option value="13">13</option>
+                                                                                                                                            <option value="14">14</option>
+                                                                                                                                            <option value="15" selected="">15</option>
+                                                                                                                                            <option value="16">16</option>
+                                                                                                                                            <option value="17">17</option>
+                                                                                                                                            <option value="18">18</option>
+                                                                                                                                            <option value="19">19</option>
+                                                                                                                                            <option value="20">20</option>
+                                                                                                                                            <option value="21">21</option>
+                                                                                                                                            <option value="22">22</option>
+                                                                                                                                            <option value="23">23</option>
+                                                                                                                                            <option value="24">24</option>
+                                                                                                                                            <option value="25">25</option>
+                                                                                                                                            <option value="26">26</option>
+                                                                                                                                            <option value="27">27</option>
+                                                                                                                                            <option value="28">28</option>
+                                                                                                                                            <option value="29">29</option>
+                                                                                                                                            <option value="30">30</option>
+                                                                                    </select>
+                                                                    </td>
+                                <td>
+                                    &nbsp;
+                                </td>
+                                <td class="cvar-description">
+                                    <label for="server[4451][cvars][mp_freezetime]">
+                                        Time in seconds at round start, when players can't walk and shoot (<span>mp_freezetime</span>)
+                                    </label>
+                                                                                                                                                        <i class="fa fa-question-circle-o cvar-name" aria-hidden="true" title="Can't be enabled on maps: gg, ffa, bhop, dm." alt="Can't be enabled on maps: gg, ffa, bhop, dm."></i>
+                                                                                                        </td>
+                            </tr>
+                                                    <tr>
+                                <td class="cvar-name">
+                                                                            Start money                                        <select name="server[4451][cvars][mp_startmoney]">
+                                                                                                                                            <option value="0">0</option>
+                                                                                                                                            <option value="800" selected="">800</option>
+                                                                                                                                            <option value="1000">1000</option>
+                                                                                                                                            <option value="2000">2000</option>
+                                                                                                                                            <option value="3000">3000</option>
+                                                                                                                                            <option value="4000">4000</option>
+                                                                                                                                            <option value="5000">5000</option>
+                                                                                                                                            <option value="6000">6000</option>
+                                                                                                                                            <option value="7000">7000</option>
+                                                                                                                                            <option value="8000">8000</option>
+                                                                                                                                            <option value="9000">9000</option>
+                                                                                                                                            <option value="10000">10000</option>
+                                                                                                                                            <option value="11000">11000</option>
+                                                                                                                                            <option value="12000">12000</option>
+                                                                                                                                            <option value="13000">13000</option>
+                                                                                                                                            <option value="14000">14000</option>
+                                                                                                                                            <option value="15000">15000</option>
+                                                                                                                                            <option value="16000">16000</option>
+                                                                                    </select>
+                                                                    </td>
+                                <td>
+                                    &nbsp;
+                                </td>
+                                <td class="cvar-description">
+                                    <label for="server[4451][cvars][mp_startmoney]">
+                                        Sets the amount of money players start with. (<span>mp_startmoney</span>)
+                                    </label>
+                                                                                                                                                        <i class="fa fa-question-circle-o cvar-name" aria-hidden="true" title="Can't be enabled on maps: gg, ffa, bhop, dm." alt="Can't be enabled on maps: gg, ffa, bhop, dm."></i>
+                                                                                                        </td>
+                            </tr>
+                                                    <tr>
+                                <td class="cvar-name">
+                                                                            Premium sounds CD                                        <select name="server[4451][cvars][csem_sank_cd]">
+                                                                                                                                            <option value="5">5</option>
+                                                                                                                                            <option value="10">10</option>
+                                                                                                                                            <option value="15">15</option>
+                                                                                                                                            <option value="20">20</option>
+                                                                                                                                            <option value="30">30</option>
+                                                                                                                                            <option value="40">40</option>
+                                                                                                                                            <option value="50">50</option>
+                                                                                                                                            <option value="60">60</option>
+                                                                                                                                            <option value="90">90</option>
+                                                                                                                                            <option value="120">120</option>
+                                                                                                                                            <option value="180">180</option>
+                                                                                                                                            <option value="300" selected="">300</option>
+                                                                                    </select>
+                                                                    </td>
+                                <td>
+                                    &nbsp;
+                                </td>
+                                <td class="cvar-description">
+                                    <label for="server[4451][cvars][csem_sank_cd]">
+                                        Sets the cooldown in seconds between premium sounds. (<span>csem_sank_cd</span>)
+                                    </label>
+                                                                                                                                            </td>
+                            </tr>
+                                                    <tr>
+                                <td class="cvar-name">
+                                                                            Limit of HE                                        <select name="server[4451][cvars][limit_hegren]">
+                                                                                                                                            <option value="0">0</option>
+                                                                                                                                            <option value="1" selected="">1</option>
+                                                                                                                                            <option value="2">2</option>
+                                                                                                                                            <option value="3">3</option>
+                                                                                                                                            <option value="4">4</option>
+                                                                                                                                            <option value="5">5</option>
+                                                                                                                                            <option value="6">6</option>
+                                                                                                                                            <option value="7">7</option>
+                                                                                                                                            <option value="8">8</option>
+                                                                                                                                            <option value="9">9</option>
+                                                                                                                                            <option value="10">10</option>
+                                                                                    </select>
+                                                                    </td>
+                                <td>
+                                    &nbsp;
+                                </td>
+                                <td class="cvar-description">
+                                    <label for="server[4451][cvars][limit_hegren]">
+                                        Limit of HE grenades, which player can buy per round, 0 = infinite (<span>limit_hegren</span>)
+                                    </label>
+                                                                                                                                            </td>
+                            </tr>
+                                                    <tr>
+                                <td class="cvar-name">
+                                                                            Limit of SG                                        <select name="server[4451][cvars][limit_sgren]">
+                                                                                                                                            <option value="0">0</option>
+                                                                                                                                            <option value="1" selected="">1</option>
+                                                                                                                                            <option value="2">2</option>
+                                                                                                                                            <option value="3">3</option>
+                                                                                                                                            <option value="4">4</option>
+                                                                                                                                            <option value="5">5</option>
+                                                                                                                                            <option value="6">6</option>
+                                                                                                                                            <option value="7">7</option>
+                                                                                                                                            <option value="8">8</option>
+                                                                                                                                            <option value="9">9</option>
+                                                                                                                                            <option value="10">10</option>
+                                                                                    </select>
+                                                                    </td>
+                                <td>
+                                    &nbsp;
+                                </td>
+                                <td class="cvar-description">
+                                    <label for="server[4451][cvars][limit_sgren]">
+                                        Limit of SG grenades, which player can buy per round, 0 = infinite (<span>limit_sgren</span>)
+                                    </label>
+                                                                                                                                            </td>
+                            </tr>
+                                                    <tr>
+                                <td class="cvar-name">
+                                                                            Limit of FL                                        <select name="server[4451][cvars][limit_flash]">
+                                                                                                                                            <option value="0">0</option>
+                                                                                                                                            <option value="1">1</option>
+                                                                                                                                            <option value="2" selected="">2</option>
+                                                                                                                                            <option value="3">3</option>
+                                                                                                                                            <option value="4">4</option>
+                                                                                                                                            <option value="5">5</option>
+                                                                                                                                            <option value="6">6</option>
+                                                                                                                                            <option value="7">7</option>
+                                                                                                                                            <option value="8">8</option>
+                                                                                                                                            <option value="9">9</option>
+                                                                                                                                            <option value="10">10</option>
+                                                                                    </select>
+                                                                    </td>
+                                <td>
+                                    &nbsp;
+                                </td>
+                                <td class="cvar-description">
+                                    <label for="server[4451][cvars][limit_flash]">
+                                        Limit of FL grenades, which player can buy per round, 0 = infinite (<span>limit_flash</span>)
+                                    </label>
+                                                                                                                                            </td>
+                            </tr>
+                                                <tr class="myservers-inline-actions">
+                            <td colspan="3" class="myservers-inline-actions__cell">
+                                <button class="save-btn3 myservers-inline-save" type="submit">
+                                    <i class="fa fa-spinner fa-spin" aria-hidden="true"></i>
+                                    <i class="fa fa-floppy-o" aria-hidden="true"></i>
+                                    <span>Save</span>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody></table>
+                    <i class="fa fa-users notice" aria-hidden="true"></i> This puts the server in public mode.                </td>
+                <td colspan="2" valign="top" align="right">
+                    <div class="save-btn" onclick="server_reboot(this, 4451)">
+                        <i class="fa fa-spinner fa-spin" aria-hidden="true" style="display: none;"></i>
+                        <i class="fa fa-check" aria-hidden="true" style="display: none;"></i>
+                        Server reboot                    </div>
+                    <div class="save-btn" onclick="restart_round(this, 4451)">
+                        <i class="fa fa-spinner fa-spin" aria-hidden="true" style="display: none;"></i>
+                        <i class="fa fa-check" aria-hidden="true" style="display: none;"></i>
+                        Game restart                    </div>
+                    <div class="server_admins">
+                                                    <div class="admin_notice">
+                                You are admin of this server.<br>
+                                Server owner id: #1588799                            </div>
+                                            </div>
+                    <div class="server_admins">
+                        <div class="save-btn admin_add_button server_players_button noselect" onclick="server_players(4451, 27080)"><i class="fa fa-users notice" aria-hidden="true"></i> Show Players list</div>
+                    </div>
+                    <div class="server_admins">
+                        <div class="save-btn admin_add_button server_players_button noselect" onclick="server_bans(4451, 27080)"><i class="fa fa-times notice" aria-hidden="true"></i> Show Bans list</div>
+                    </div>
+                </td>
+            </tr>
+                </tbody>
+    </table>
+                </div>
+
+                <div class="myservers-form__row myservers-form__row--actions">
+                    <button class="save-btn3 myservers-submit" type="submit">
+                        <i class="fa fa-spinner fa-spin" aria-hidden="true"></i>
+                        <i class="fa fa-floppy-o" aria-hidden="true"></i>
+                        <span>Save</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+        <div class="myservers-card__footer">
+            <div id="server_owner_messages">
+                <div id="not_server_owner">Not server owner!</div>
+                <div id="unknown_method">Unknown method!</div>
+                <div id="admin_is_deleted">Admin is deleted!</div>
+                <div id="incorrect_id">Incorrect player ID!</div>
+                <div id="yourself_as_admin">You can't add yourself as admin!</div>
+                <div id="user_not_exist">User not exist!</div>
+                <div id="admin_is_added">Admin is added!</div>
+                <div id="admin_already">This user is admin already!</div>
+                <div id="admins_max">Maximum number of admins exceeded!</div>
+            </div>
+        </div>
+    </section>
+    </div>
+
+</div>
+</div>
