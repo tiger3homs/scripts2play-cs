@@ -1,4 +1,4 @@
-# Server Manager (Maps, Presets, PINs & UI)
+# Server Manager  (Maps, Presets, PINs & UI)
 
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/aba1d350-f9ab-4461-94f5-9dd20b754167" />
 
