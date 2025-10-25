@@ -152,11 +152,11 @@
         const trPlayers = getPlayers(".scoreboard-hud-tr-body tr", "TR", playerExtraInfo);
 
         // Determine match ID
-        function sendPayload(matchId) {
+        function sendPayload(matchId, currentHalfLabel) {
             const payload = {
                 data: {
                     Map: mapName,
-                    Half: halfLabel,
+                    Half: currentHalfLabel,
                     "CT Score": ctScore,
                     "TR Score": trScore,
                     "Players JSON": JSON.stringify([...ctPlayers, ...trPlayers]),
@@ -196,11 +196,11 @@
             fetchLastMatchId((lastId) => {
                 // Only increment if sending first half
                 currentMatchId = halfLabel === "First Half" ? lastId + 1 : lastId;
-                sendPayload(currentMatchId);
+                sendPayload(currentMatchId, halfLabel);
             });
         } else {
             // Use existing match ID for second half
-            sendPayload(currentMatchId);
+            sendPayload(currentMatchId, halfLabel);
         }
     }
 
