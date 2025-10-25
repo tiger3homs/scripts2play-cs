@@ -71,8 +71,8 @@
         document.addEventListener('sbs:playerInfo', listener);
     });
 
-    // Fetch last Match ID from SheetDB
-    function fetchLastMatchId(callback) {
+    // Fetch last Match Info from SheetDB
+    function fetchLastMatchInfo(callback) {
         GM_xmlhttpRequest({
             method: "GET",
             url: SHEETDB_API_URL,
@@ -80,26 +80,29 @@
                 try {
                     const data = JSON.parse(res.responseText);
                     if (data.length === 0) {
-                        callback(0); // No match yet
+                        callback({ id: 0, half: "Second Half" }); // No matches yet, so next is First Half
                     } else {
-                        // Get max Match ID from Sheet (assumes numeric)
-                        const maxId = Math.max(...data.map(row => parseInt(row["Match ID"] || 0)));
-                        callback(maxId);
+                        // Assuming the last row is the latest entry
+                        const lastEntry = data[data.length - 1];
+                        callback({
+                            id: parseInt(lastEntry["Match ID"] || 0),
+                            half: lastEntry["Half"] || "Second Half"
+                        });
                     }
                 } catch (e) {
                     err("Error parsing SheetDB response:", e);
-                    callback(0);
+                    callback({ id: 0, half: "Second Half" });
                 }
             },
             onerror: (error) => {
-                err("Error fetching last match ID:", error);
-                callback(0);
+                err("Error fetching last match info:", error);
+                callback({ id: 0, half: "Second Half" });
             }
         });
     }
 
     // Capture scoreboard and send
-    async function captureAndSend(halfLabel = "First Half") {
+    async function captureAndSend() {
         if (!SHEETDB_API_URL) {
             warn("SheetDB API URL not set. Use Alt+Shift+S.");
             return showMsg("SheetDB URL not set! Press Alt+Shift+S to configure.", "orange", 5000);
@@ -151,22 +154,32 @@
         const ctPlayers = getPlayers(".scoreboard-hud-ct-body tr", "CT", playerExtraInfo);
         const trPlayers = getPlayers(".scoreboard-hud-tr-body tr", "TR", playerExtraInfo);
 
-        // Determine match ID
-        function sendPayload(matchId, currentHalfLabel) {
+        fetchLastMatchInfo((lastMatch) => {
+            let newMatchId;
+            let newHalfLabel;
+
+            if (lastMatch.half === "First Half") {
+                newMatchId = lastMatch.id;
+                newHalfLabel = "Second Half";
+            } else { // If last was "Second Half" or sheet is empty
+                newMatchId = lastMatch.id + 1;
+                newHalfLabel = "First Half";
+            }
+
             const payload = {
                 data: {
                     Map: mapName,
-                    Half: currentHalfLabel,
+                    Half: newHalfLabel,
                     "CT Score": ctScore,
                     "TR Score": trScore,
                     "Players JSON": JSON.stringify([...ctPlayers, ...trPlayers]),
                     Date: new Date().toLocaleDateString("en-US"),
-                    "Match ID": matchId
+                    "Match ID": newMatchId
                 }
             };
 
             log("Sending payload:", payload);
-            showMsg("Sending to SheetDB...", "lightblue");
+            showMsg(`Sending ${newHalfLabel} for Match ID ${newMatchId}...`, "lightblue");
 
             GM_xmlhttpRequest({
                 method: "POST",
@@ -189,19 +202,7 @@
                     showMsg("Failed to send to SheetDB (network error)!", "red");
                 }
             });
-        }
-
-        // If no currentMatchId yet, fetch last from SheetDB
-        if (currentMatchId === null) {
-            fetchLastMatchId((lastId) => {
-                // Only increment if sending first half
-                currentMatchId = halfLabel === "First Half" ? lastId + 1 : lastId;
-                sendPayload(currentMatchId, halfLabel);
-            });
-        } else {
-            // Use existing match ID for second half
-            sendPayload(currentMatchId, halfLabel);
-        }
+        });
     }
 
     // --- UI ---
@@ -282,7 +283,7 @@
     };
 
     // --- INIT & HOTKEYS ---
-    log("Scoreboard to SheetDB script loaded. Hotkeys: 'P' (First Half), 'K' (Second Half), 'Alt+Shift+S' (Settings).");
+    log("Scoreboard to SheetDB script loaded. Hotkeys: 'P' or 'K' (Capture), 'Alt+Shift+S' (Settings).");
     showMsg("SheetDB script loaded (P/K | Alt+Shift+S)", "lightgreen", CFG.MSG_DURATION);
     if (!SHEETDB_API_URL) showMsg("No SheetDB URL set! Use Alt+Shift+S to configure.", "orange", 5000);
 
@@ -299,12 +300,10 @@
 
         if (isInputFocused || isModalOpen) return;
 
-        if (e.key.toLowerCase() === "p") {
+        if (e.key.toLowerCase() === "p" || e.key.toLowerCase() === "k") {
             e.preventDefault();
-            captureAndSend("First Half");
-        } else if (e.key.toLowerCase() === "k") {
-            e.preventDefault();
-            captureAndSend("Second Half");
+            captureAndSend();
         }
     });
 })();
+    
