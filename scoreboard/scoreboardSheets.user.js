@@ -53,6 +53,24 @@
     };
 
     // --- API & SCOREBOARD ---
+    // Injects a script to get window.g_PlayerExtraInfo
+    const getPlayerExtraInfo = () => new Promise((resolve) => {
+        const script = document.createElement('script');
+        script.textContent = `
+            document.dispatchEvent(new CustomEvent('sbs:playerInfo', {
+                detail: window.g_PlayerExtraInfo || null
+            }));
+        `;
+        document.head.appendChild(script);
+        document.head.removeChild(script);
+
+        const listener = (e) => {
+            document.removeEventListener('sbs:playerInfo', listener);
+            resolve(e.detail);
+        };
+        document.addEventListener('sbs:playerInfo', listener);
+    });
+
     // Fetch last Match ID from SheetDB
     function fetchLastMatchId(callback) {
         GM_xmlhttpRequest({
@@ -81,10 +99,15 @@
     }
 
     // Capture scoreboard and send
-    function captureAndSend(halfLabel = "First Half") {
+    async function captureAndSend(halfLabel = "First Half") {
         if (!SHEETDB_API_URL) {
             warn("SheetDB API URL not set. Use Alt+Shift+S.");
             return showMsg("SheetDB URL not set! Press Alt+Shift+S to configure.", "orange", 5000);
+        }
+
+        const playerExtraInfo = await getPlayerExtraInfo();
+        if (!playerExtraInfo) {
+            warn("Could not retrieve g_PlayerExtraInfo.");
         }
 
         const sb = document.querySelector(".hud-scoreboard");
@@ -97,7 +120,7 @@
         const ctScore = parseInt(sb.querySelector(".scoreboard-hud-ct-head span")?.innerText, 10) || 0;
         const trScore = parseInt(sb.querySelector(".scoreboard-hud-tr-head span")?.innerText, 10) || 0;
 
-        const getPlayers = (sel, team) => {
+        const getPlayers = (sel, team, extraInfo) => {
             const players = [];
             sb.querySelectorAll(sel).forEach(row => {
                 const cols = row.querySelectorAll("td");
@@ -108,16 +131,25 @@
                 let countryCode = (cols[1]?.querySelector(".flag-icon")?.classList.value.match(/flag-icon-([a-z]{2})/)?.[1] || "").toUpperCase();
                 let kills = parseInt(cols[3]?.innerText, 10) || 0;
                 let deaths = parseInt(cols[4]?.innerText, 10) || 0;
+                let playerId = null;
+
+                // Find player in extraInfo by name to get the unique ID
+                if (extraInfo) {
+                    const playerEntry = Object.entries(extraInfo).find(([id, data]) => data.name === cleanedName);
+                    if (playerEntry) {
+                        playerId = playerEntry[0];
+                    }
+                }
 
                 if (kills > 0 || deaths > 0) {
-                    players.push({ name: cleanedName, kills, deaths, flag: c2e(countryCode), team });
+                    players.push({ id: playerId, name: cleanedName, kills, deaths, flag: c2e(countryCode), team });
                 }
             });
             return players;
         };
 
-        const ctPlayers = getPlayers(".scoreboard-hud-ct-body tr", "CT");
-        const trPlayers = getPlayers(".scoreboard-hud-tr-body tr", "TR");
+        const ctPlayers = getPlayers(".scoreboard-hud-ct-body tr", "CT", playerExtraInfo);
+        const trPlayers = getPlayers(".scoreboard-hud-tr-body tr", "TR", playerExtraInfo);
 
         // Determine match ID
         function sendPayload(matchId) {
