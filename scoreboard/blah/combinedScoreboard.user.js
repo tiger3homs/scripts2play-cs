@@ -126,7 +126,7 @@
         if (!sb) return showMsg("⚠️ Scoreboard not found", "orange");
 
         const playerExtraInfo = await getPlayerExtraInfo();
-        const map = document.querySelector(".hud-map-name")?.textContent?.trim() || "Unknown";
+        const mapName = document.querySelector(".map-name")?.textContent?.trim() || "Unknown";
         const ctScore = parseInt(sb.querySelector(".scoreboard-hud-ct-head span")?.textContent) || 0;
         const trScore = parseInt(sb.querySelector(".scoreboard-hud-tr-head span")?.textContent) || 0;
         const half = forcedHalf || currentHalf;
@@ -160,7 +160,7 @@
         const allPlayers = [...ctPlayers, ...trPlayers];
 
         const payload = {
-            Map: map,
+            Map: mapName,
             Half: half,
             "CT Score": ctScore,
             "TR Score": trScore,
