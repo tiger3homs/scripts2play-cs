@@ -24,6 +24,7 @@
   let API_URL = await GM_getValue(CFG.API_URL_KEY) || CFG.DEFAULT_API_URL;
   let SECRET_TOKEN = await GM_getValue(CFG.SECRET_TOKEN_KEY);
   let lastMatchInfo;
+  let teamsSwapped = false; // Track if sides have been swapped
 
   const log = (...a) => console.log("[SBS]", ...a);
   const err = (...a) => console.error("[SBS]", ...a);
@@ -182,7 +183,7 @@
       };
   };
 
-  const sendToGoogleSheet = (data) => {
+  const sendToGoogleSheet = (data) => new Promise((resolve, reject) => {
       log("Sending to Google Apps Script:", data);
       showMsg({ title: "Sending Data", body: `Sending ${data.Half} for Match ${data["Match ID"]}...` }, "lightblue");
 
@@ -194,19 +195,22 @@
           onload: (res) => {
               if (res.status >= 200 && res.status < 300) {
                   showMsg({ title: "Success", body: "Sent to Google Sheet successfully!" }, "green");
-                  // Update state after successful send
                   lastMatchInfo = { id: data["Match ID"], half: data.Half };
+                  updateHalfLabel(lastMatchInfo.half);
+                  resolve();
               } else {
                   showMsg({ title: "Error", body: "Error sending data!" }, "red");
                   err("Error:", res.status, res.responseText);
+                  reject(res);
               }
           },
           onerror: (e) => {
               showMsg({ title: "Network Error", body: "Network error while sending!" }, "red");
               err("Network error:", e);
+              reject(e);
           }
       });
-  };
+  });
 
   // Main capture and send
   async function captureAndSend() {
@@ -227,9 +231,170 @@
       const scoreboardData = parseScoreboard(playerExtraInfo);
       if (!scoreboardData) return;
 
-      const sheetData = prepareSheetData(scoreboardData, lastMatchInfo);
+      // Handle side swap dynamically
+      let finalScoreboardData = { ...scoreboardData };
+      if (teamsSwapped) {
+          log("Teams are swapped, flipping scores and players for reporting.");
+          // Create new arrays and objects to avoid mutation issues
+          const newCtPlayers = JSON.parse(JSON.stringify(scoreboardData.trPlayers));
+          const newTrPlayers = JSON.parse(JSON.stringify(scoreboardData.ctPlayers));
+
+          newCtPlayers.forEach(p => p.team = "CT");
+          newTrPlayers.forEach(p => p.team = "TR");
+
+          finalScoreboardData = {
+              ...scoreboardData,
+              ctScore: scoreboardData.trScore,
+              trScore: scoreboardData.ctScore,
+              ctPlayers: newCtPlayers,
+              trPlayers: newTrPlayers
+          };
+      }
+
+      const sheetData = prepareSheetData(finalScoreboardData, lastMatchInfo);
       sendToGoogleSheet(sheetData);
   }
+
+  // --- AUTO-SEND LOGIC ---
+  let autoSendDebounceTimer;
+
+  // Helper function for auto-triggered sends to avoid code duplication
+  async function sendDataForAutoTrigger(matchId, half) {
+      if (!SECRET_TOKEN) {
+          return showMsg({ title: "Configuration Needed", body: "Secret Token not set." }, "orange");
+      }
+
+      const playerExtraInfo = await getPlayerExtraInfo();
+      const scoreboardData = parseScoreboard(playerExtraInfo);
+      if (!scoreboardData) return;
+
+      // Handle side swap dynamically
+      let finalScoreboardData = { ...scoreboardData };
+      if (teamsSwapped) {
+          log("Teams are swapped, flipping scores and players for reporting.");
+          const newCtPlayers = JSON.parse(JSON.stringify(scoreboardData.trPlayers));
+          const newTrPlayers = JSON.parse(JSON.stringify(scoreboardData.ctPlayers));
+          newCtPlayers.forEach(p => p.team = "CT");
+          newTrPlayers.forEach(p => p.team = "TR");
+          finalScoreboardData = {
+              ...scoreboardData,
+              ctScore: scoreboardData.trScore,
+              trScore: scoreboardData.ctScore,
+              ctPlayers: newCtPlayers,
+              trPlayers: newTrPlayers
+          };
+      }
+
+      const sheetData = {
+          Map: finalScoreboardData.mapName,
+          Half: half,
+          "CT Score": finalScoreboardData.ctScore,
+          "TR Score": finalScoreboardData.trScore,
+          "Players JSON": JSON.stringify([...finalScoreboardData.ctPlayers, ...finalScoreboardData.trPlayers]),
+          Date: new Date().toLocaleDateString("en-US"),
+          "Match ID": matchId
+      };
+
+      await sendToGoogleSheet(sheetData);
+  }
+
+  async function checkAndAutoSend() {
+      const scoreboardData = parseScoreboard();
+      if (!scoreboardData) return;
+
+      const { ctScore, trScore } = scoreboardData;
+      const lastInfo = await fetchLastMatchInfo();
+
+      // Determine the current state based on the last entry in the sheet
+      const inSecondHalf = lastInfo.id > 0 && lastInfo.half === "First Half";
+      const isNewMatch = !inSecondHalf;
+      const currentMatchId = isNewMatch ? (lastInfo.id || 0) + 1 : lastInfo.id;
+
+      // State 1: We are in the second half of an ongoing match
+      if (inSecondHalf) {
+          // Condition: Match ends when a team reaches 16
+          if (ctScore === 16 || trScore === 16) {
+              log("Match end condition met (score is 16).");
+              showMsg({ title: "Match Ended", body: "Auto-sending final data..." }, "lightblue");
+              await sendDataForAutoTrigger(currentMatchId, "Match Ended");
+          }
+      }
+      // State 2: We are in the first half of a new match
+      else {
+          // Condition: First half ends when total score is 15
+          if (ctScore + trScore === 15) {
+              log("First half end condition met (total score is 15).");
+              showMsg({ title: "First Half Ended", body: "Auto-sending data..." }, "lightblue");
+              await sendDataForAutoTrigger(currentMatchId, "First Half");
+          }
+      }
+  }
+
+  const scoreboardObserver = new MutationObserver(() => {
+      clearTimeout(autoSendDebounceTimer);
+      // Debounce to avoid rapid firing during score updates.
+      autoSendDebounceTimer = setTimeout(checkAndAutoSend, 1000);
+  });
+
+  function startScoreboardObserver() {
+      const scoreboardNode = document.querySelector(".hud-scoreboard");
+      if (scoreboardNode) {
+          // We observe the score containers specifically for changes.
+          const ctScoreNode = scoreboardNode.querySelector(".scoreboard-hud-ct-head span");
+          const trScoreNode = scoreboardNode.querySelector(".scoreboard-hud-tr-head span");
+
+          if (ctScoreNode && trScoreNode) {
+              scoreboardObserver.observe(ctScoreNode, { characterData: true, childList: true, subtree: true });
+              scoreboardObserver.observe(trScoreNode, { characterData: true, childList: true, subtree: true });
+              log("Scoreboard observer started.");
+          } else {
+              warn("Score elements not found, retrying observer setup...");
+              setTimeout(startScoreboardObserver, 2000);
+          }
+      } else {
+          // If scoreboard isn't there, wait and try again.
+          setTimeout(startScoreboardObserver, 2000);
+      }
+  }
+
+  // --- HALF LABEL UI ---
+  const createHalfLabel = () => {
+      GM_addStyle(`
+          #sbs-half-label {
+              position: fixed;
+              top: 10px;
+              left: 50%;
+              transform: translateX(-50%);
+              padding: 8px 16px;
+              background: rgba(0,0,0,.7);
+              color: white;
+              border-radius: 8px;
+              z-index: 9999;
+              font-size: 16px;
+              font-family: 'Arial', sans-serif;
+              font-weight: bold;
+              box-shadow: 0 2px 8px rgba(0,0,0,.4);
+              transition: opacity .3s;
+              opacity: 0; /* Start hidden */
+          }
+      `);
+      const label = document.createElement("div");
+      label.id = "sbs-half-label";
+      document.body.appendChild(label);
+      return label;
+  };
+
+  const halfLabel = createHalfLabel();
+
+  const updateHalfLabel = (lastSentHalf) => {
+      if (halfLabel) {
+          // If the last sent data was for the "First Half", we are now in the "Second Half".
+          // If the last sent data was for the "Second Half", the next match will be "First Half".
+          const displayHalf = lastSentHalf === "First Half" ? "Second Half" : "First Half";
+          halfLabel.textContent = displayHalf;
+          halfLabel.style.opacity = "1";
+      }
+  };
 
   // --- SETTINGS PANEL ---
   const createSettingsPanel = () => {
@@ -282,9 +447,12 @@
       if (SECRET_TOKEN) {
           lastMatchInfo = await fetchLastMatchInfo();
           log("Last match info loaded:", lastMatchInfo);
+          updateHalfLabel(lastMatchInfo.half);
       } else {
           log("Secret token not set. Skipping initial fetch.");
       }
+      // Start the observer to automatically detect the end of the first half.
+      startScoreboardObserver();
   };
 
   // --- HOTKEYS ---
@@ -303,5 +471,32 @@
       }
   });
 
+  // --- CHAT MONITOR: Detect /swap or "Teams swapped!" ---
+  const initChatObserver = () => {
+      const chatContainer = document.querySelector(".hud-chat-messages");
+      if (chatContainer) {
+          const observer = new MutationObserver((mutations) => {
+              for (const mutation of mutations) {
+                  mutation.addedNodes.forEach((node) => {
+                      if (node.nodeType === 1 && node.classList.contains("hud-chat-message")) {
+                          const text = node.innerText.toLowerCase();
+                          if (text.includes("/swap") || text.includes("teams swapped")) {
+                              teamsSwapped = !teamsSwapped;
+                              log(`🔁 Teams swapped detected! teamsSwapped = ${teamsSwapped}`);
+                              showMsg(`🔁 Teams swapped! (Sides are now flipped)`, "lightblue", 4000);
+                          }
+                      }
+                  });
+              }
+          });
+          observer.observe(chatContainer, { childList: true, subtree: true });
+          log("Chat observer initialized — listening for /swap or 'Teams swapped!'");
+      } else {
+          warn("Chat container not found — cannot detect /swap. Retrying...");
+          setTimeout(initChatObserver, 2000); // Retry if chat is not loaded yet
+      }
+  };
+
   initialize();
+  initChatObserver();
 })();

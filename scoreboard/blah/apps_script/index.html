@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apps Script Sheet Manager</title>
+    <style>
+        body { font-family: sans-serif; margin: 2em; }
+        input, textarea, button { display: block; width: 100%; margin-bottom: 1em; padding: 8px; box-sizing: border-box; }
+        textarea { min-height: 150px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        th { background-color: #f4f4f4; }
+        .container { max-width: 800px; margin: auto; }
+        .credentials { margin-bottom: 2em; }
+        .data-display { margin-top: 2em; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Google Sheet Manager</h1>
+
+        <div class="credentials">
+            <h2>Credentials</h2>
+            <label for="appsScriptUrl">Apps Script Web App URL:</label>
+            <input type="text" id="appsScriptUrl" placeholder="Enter your Apps Script URL">
+            <label for="secretToken">Secret Token:</label>
+            <input type="password" id="secretToken" placeholder="Enter your secret token">
+        </div>
+
+        <div class="fetch-data">
+            <h2>Fetch Data</h2>
+            <button onclick="fetchData('last')">Get Last Entry</button>
+            <button onclick="fetchData()">Get All Data</button>
+            <div id="data-display" class="data-display"></div>
+        </div>
+
+        <div class="add-data">
+            <h2>Add New Entry</h2>
+            <form id="add-entry-form">
+                <label for="map">Map:</label>
+                <input type="text" id="map" name="Map">
+                <label for="half">Half:</label>
+                <input type="text" id="half" name="Half">
+                <label for="ct-score">CT Score:</label>
+                <input type="number" id="ct-score" name="CT Score">
+                <label for="tr-score">TR Score:</label>
+                <input type="number" id="tr-score" name="TR Score">
+                <label for="players-json">Players JSON:</label>
+                <textarea id="players-json" name="Players JSON">[]</textarea>
+                <label for="date">Date:</label>
+                <input type="date" id="date" name="Date">
+                <label for="match-id">Match ID:</label>
+                <input type="text" id="match-id" name="Match ID">
+                <button type="submit">Submit</button>
+            </form>
+            <div id="post-result"></div>
+        </div>
+    </div>
+
+    <script>
+        const getUrl = () => document.getElementById('appsScriptUrl').value.trim();
+        const getToken = () => document.getElementById('secretToken').value.trim();
+
+        async function fetchData(action = '') {
+            const baseUrl = getUrl();
+            const token = getToken();
+            const display = document.getElementById('data-display');
+
+            if (!baseUrl || !token) {
+                display.innerHTML = `<p class="error">Please enter your Apps Script URL and Secret Token.</p>`;
+                return;
+            }
+
+            const url = new URL(baseUrl);
+            url.searchParams.append('token', token);
+            if (action) {
+                url.searchParams.append('action', action);
+            }
+
+            display.innerHTML = '<p>Loading...</p>';
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
+                if (action === 'last') {
+                    display.innerHTML = `<pre>${JSON.stringify(data.last, null, 2)}</pre>`;
+                } else {
+                    let table = '<table><thead><tr>';
+                    const headers = Object.keys(data.rows[0] || {});
+                    headers.forEach(h => table += `<th>${h}</th>`);
+                    table += '</tr></thead><tbody>';
+                    data.rows.forEach(row => {
+                        table += '<tr>';
+                        headers.forEach(h => table += `<td>${row[h]}</td>`);
+                        table += '</tr>';
+                    });
+                    table += '</tbody></table>';
+                    display.innerHTML = table;
+                }
+            } catch (error) {
+                display.innerHTML = `<p class="error">Error: ${error.message}</p>`;
+            }
+        }
+
+        document.getElementById('add-entry-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const baseUrl = getUrl();
+            const token = getToken();
+            const resultDiv = document.getElementById('post-result');
+
+            if (!baseUrl || !token) {
+                resultDiv.innerHTML = `<p class="error">Please enter your Apps Script URL and Secret Token.</p>`;
+                return;
+            }
+
+            const formData = new FormData(e.target);
+            const data = {};
+            formData.forEach((value, key) => {
+                data[key] = value;
+            });
+            
+            // Auto-format date if not provided
+            if (!data.Date) {
+                const today = new Date();
+                const year = today.getFullYear();
+                const month = String(today.getMonth() + 1).padStart(2, '0');
+                const day = String(today.getDate()).padStart(2, '0');
+                data.Date = `${year}-${month}-${day}`;
+                document.getElementById('date').value = data.Date;
+            }
+
+            const payload = {
+                token: token,
+                data: data
+            };
+
+            resultDiv.innerHTML = '<p>Submitting...</p>';
+
+            try {
+                const response = await fetch(baseUrl, {
+                    method: 'POST',
+                    mode: 'no-cors', // Apps Script web apps often require this
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload)
+                });
+                
+                // Because of no-cors, we can't read the response. We just assume it worked if no network error.
+                // A more robust solution involves a different deployment method for the Apps Script.
+                resultDiv.innerHTML = `<p style="color: green;">Data submitted successfully (response not readable due to CORS policy).</p>`;
+                e.target.reset();
+
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">Error: ${error.message}</p>`;
+            }
+        });
+    </script>
+</body>
+</html>
