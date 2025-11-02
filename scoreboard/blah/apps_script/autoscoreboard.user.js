@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         0Scoreboard to Google Sheet (Apps Script API)
+// @name         CS SB to Google Sheet (Apps Script API)
 // @namespace    http://tampermonkey.net/
 // @version      2.2
 // @description  Capture Play-CS scoreboard and send to your Google Sheet via Apps Script API
@@ -19,17 +19,26 @@
     API_URL_KEY: "sheetApiUrl",
     SECRET_TOKEN_KEY: "sheetApiSecretToken",
     TRACKER_SERVER_KEY: "trackerServer",
+    SOUND_ENABLED_KEY: "soundEnabled",
     MSG_DURATION: 3000,
-    DEFAULT_API_URL: "https://script.google.com/macros/s/AKfycbwxKHC_wYY2dz5gZod8nQiOp60lKHRi60HB7rTG15qoAXHd0PrTVFgCzqEJsEDfQ97K/exec"
+    DEFAULT_API_URL: "https://script.google.com/macros/s/AKfycbwxKHC_wYY2dz5gZod8nQiOp60lKHRi60HB7rTG15qoAXHd0PrTVFgCzqEJsEDfQ97K/exec",
+    NOTIFICATION_SOUND_URL: "https://github.com/lefuturiste/discord-sounds/blob/master/new-message.mp3?raw=true"
   };
   let API_URL = await GM_getValue(CFG.API_URL_KEY) || CFG.DEFAULT_API_URL;
   let SECRET_TOKEN = await GM_getValue(CFG.SECRET_TOKEN_KEY);
   let TRACKER_SERVER = await GM_getValue(CFG.TRACKER_SERVER_KEY);
+  let SOUND_ENABLED = await GM_getValue(CFG.SOUND_ENABLED_KEY, false);
   let lastMatchInfo;
 
   const log = (...a) => console.log("[SBS]", ...a);
   const err = (...a) => console.error("[SBS]", ...a);
   const warn = (...a) => console.warn("[SBS]", ...a);
+
+  const playSound = () => {
+      if (!SOUND_ENABLED) return;
+      const audio = new Audio(CFG.NOTIFICATION_SOUND_URL);
+      audio.play().catch(e => err("Error playing sound:", e));
+  };
 
   // Converts 2-letter country code to emoji flag
   const c2e = (c) => (c && /^[a-zA-Z]{2}$/.test(c)) ? c.toUpperCase().replace(/./g, char => String.fromCodePoint(127397 + char.charCodeAt(0))) : "🏳️";
@@ -43,21 +52,23 @@
             position: "fixed",
             top: "10px",
             right: "10px",
-            padding: "10px 18px",
-            background: "rgba(0,0,0,.8)",
-            borderRadius: "8px",
+            padding: "4px 10px",
+            background: "rgba(20, 20, 20, 0.6)",
+            borderRadius: "5px",
             zIndex: "10000",
-            fontSize: "14px",
+            fontSize: "13px",
             fontFamily: "Arial, sans-serif",
             color: "white",
             transition: "opacity .3s ease-in-out",
-            boxShadow: "0 2px 10px rgba(0,0,0,.5)"
+            boxShadow: "0 1px 5px rgba(0,0,0,.3)",
+            backdropFilter: "blur(10px)",
+            webkitBackdropFilter: "blur(10px)"
         });
         document.body.appendChild(el);
     }
 
     if (typeof msg === 'object' && msg !== null) {
-        el.innerHTML = `<strong style="display: block; margin-bottom: 5px; font-size: 16px; color: ${color};">${msg.title}</strong><span style="font-size: 13px;">${msg.body}</span>`;
+        el.innerHTML = `<strong style="color: ${color};">${msg.title}:</strong> <span>${msg.body}</span>`;
     } else {
         el.innerHTML = `<span style="color: ${color};">${msg}</span>`;
     }
@@ -194,7 +205,8 @@
           data: JSON.stringify({ token: SECRET_TOKEN, data }),
           onload: (res) => {
               if (res.status >= 200 && res.status < 300) {
-                  showMsg({ title: "Success", body: "Sent to Google Sheet successfully!" }, "green");
+                  showMsg({ title: "Success", body: `Sent ${data.Half} for Match ${data["Match ID"]} successfully!` }, "green");
+                  playSound();
                   // After sending, update lastMatchInfo with the data that was just sent.
                   lastMatchInfo = { ...data };
                   updateHalfLabel(lastMatchInfo.Half);
@@ -238,80 +250,104 @@
 
 
   // --- HALF LABEL UI ---
-  const createHalfLabel = () => {
-      GM_addStyle(`
-          #sbs-half-label {
-              position: fixed;
-              top: 10px;
-              left: 50%;
-              transform: translateX(-50%);
-              padding: 8px 16px;
-              background: rgba(0,0,0,.7);
-              color: white;
-              border-radius: 8px;
-              z-index: 9999;
-              font-size: 16px;
-              font-family: 'Arial', sans-serif;
-              font-weight: bold;
-              box-shadow: 0 2px 8px rgba(0,0,0,.4);
-              transition: opacity .3s;
-              opacity: 0.4; /* Start hidden */
-          }
-      `);
-      const label = document.createElement("div");
-      label.id = "sbs-half-label";
-      document.body.appendChild(label);
-      return label;
-  };
-
-  const halfLabel = createHalfLabel();
-
   const updateHalfLabel = (lastSentHalf) => {
-      if (halfLabel) {
-          const displayHalf = lastSentHalf === "First Half" ? "Second Half" : "First Half";
-          halfLabel.textContent = `Next: ${displayHalf}`;
-          halfLabel.style.opacity = "0.4";
-      }
+      const displayHalf = lastSentHalf === "First Half" ? "Second Half" : "First Half";
+      showMsg({ title: "Next", body: `Ready for ${displayHalf}` }, "lightblue", 15000);
   };
 
   // --- SETTINGS PANEL ---
   const createSettingsPanel = () => {
       GM_addStyle(`
-          #sbs-settings { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #2c2c2c; color: white; padding: 20px; border-radius: 8px; z-index: 10001; box-shadow: 0 0 15px rgba(0,0,0,.5); }
-          #sbs-settings h2 { margin-top: 0; border-bottom: 1px solid #444; padding-bottom: 10px; }
-          #sbs-settings label { display: block; margin: 10px 0 5px; }
-          #sbs-settings input { width: 100%; padding: 8px; background: #333; border: 1px solid #555; color: white; border-radius: 4px; }
-          #sbs-settings button { padding: 10px 15px; border: none; background: #4CAF50; color: white; border-radius: 4px; cursor: pointer; margin-top: 15px; }
-          #sbs-settings .close-btn { background: #f44336; float: right; }
+          #sbs-settings {
+              display: none;
+              position: fixed;
+              top: 50%;
+              left: 50%;
+              transform: translate(-50%, -50%);
+              background: rgba(20, 20, 20, 0.95);
+              color: #fff;
+              z-index: 10001;
+              padding: 0;
+              width: 450px;
+              font-family: sans-serif;
+              border: 1px solid #555;
+          }
+          #sbs-settings .sbs-header { background: #333; padding: 10px; font-size: 1.2em; text-align: center; }
+          #sbs-settings .sbs-content { padding: 20px; }
+          #sbs-settings .sbs-row { display: flex; margin-bottom: 12px; align-items: center; }
+          #sbs-settings .sbs-row label { flex-basis: 130px; flex-shrink: 0; }
+          #sbs-settings .sbs-row input[type="text"],
+          #sbs-settings .sbs-row input[type="password"] {
+              flex-grow: 1;
+              background: #111;
+              border: 1px solid #444;
+              color: #fff;
+              padding: 8px;
+              width: 100%;
+          }
+          #sbs-settings .sbs-footer { background: #333; padding: 10px; text-align: right; }
+          #sbs-settings button { background: #555; border: 1px solid #777; color: #fff; padding: 8px 15px; cursor: pointer; }
+          #sbs-settings button:hover { background: #666; }
       `);
 
       const panel = document.createElement("div");
       panel.id = "sbs-settings";
       panel.innerHTML = `
-          <h2>Scoreboard Sender Settings</h2>
-          <label for="sbs-api-url">API URL:</label>
-          <input type="text" id="sbs-api-url">
-          <label for="sbs-secret-token">Secret Token:</label>
-          <input type="password" id="sbs-secret-token">
-          <label for="sbs-tracker-server">Tracker Server:</label>
-          <textarea id="sbs-tracker-server" rows="2" style="width: 100%; background: #333; border: 1px solid #555; color: white; border-radius: 4px;"></textarea>
-          <button id="sbs-save-btn">Save</button>
-          <button id="sbs-close-btn" class="close-btn">Close</button>
+          <div class="sbs-header">Scoreboard Settings</div>
+          <div class="sbs-content">
+              <div class="sbs-row">
+                  <label for="sbs-api-url">API URL:</label>
+                  <input type="text" id="sbs-api-url">
+              </div>
+              <div class="sbs-row">
+                  <label for="sbs-secret-token">Secret Token:</label>
+                  <input type="password" id="sbs-secret-token">
+              </div>
+              <div class="sbs-row">
+                  <label for="sbs-tracker-server-1">Tracker Server:</label>
+                  <input type="text" id="sbs-tracker-server-1" placeholder="e.g., OBBE">
+              </div>
+              <div class="sbs-row">
+                  <label for="sbs-tracker-server-2">Tracker Name:</label>
+                  <input type="text" id="sbs-tracker-server-2" placeholder="e.g., GANGS">
+              </div>
+              <div class="sbs-row">
+                  <label for="sbs-sound-enabled">Notification Sound:</label>
+                  <input type="checkbox" id="sbs-sound-enabled">
+              </div>
+          </div>
+          <div class="sbs-footer">
+              <button id="sbs-save-btn">Save</button>
+              <button id="sbs-close-btn" style="margin-left: 10px;">Close</button>
+          </div>
       `;
       document.body.appendChild(panel);
+
+      // Stop event propagation to fix typing issue in game environments
+      const stopPropagation = e => e.stopPropagation();
+      panel.querySelectorAll('input').forEach(input => {
+          input.addEventListener('keydown', stopPropagation);
+          input.addEventListener('keyup', stopPropagation);
+          input.addEventListener('keypress', stopPropagation);
+      });
 
       document.getElementById("sbs-save-btn").addEventListener("click", async () => {
           const newApiUrl = document.getElementById("sbs-api-url").value;
           const newSecretToken = document.getElementById("sbs-secret-token").value;
-          const newTrackerServer = document.getElementById("sbs-tracker-server").value;
+          const tracker1 = document.getElementById("sbs-tracker-server-1").value.trim();
+          const tracker2 = document.getElementById("sbs-tracker-server-2").value.trim();
+          const newTrackerServer = [tracker1, tracker2].filter(Boolean).join(', ');
+          const newSoundEnabled = document.getElementById("sbs-sound-enabled").checked;
 
           await GM_setValue(CFG.API_URL_KEY, newApiUrl);
           await GM_setValue(CFG.SECRET_TOKEN_KEY, newSecretToken);
           await GM_setValue(CFG.TRACKER_SERVER_KEY, newTrackerServer);
+          await GM_setValue(CFG.SOUND_ENABLED_KEY, newSoundEnabled);
 
           API_URL = newApiUrl;
           SECRET_TOKEN = newSecretToken;
           TRACKER_SERVER = newTrackerServer;
+          SOUND_ENABLED = newSoundEnabled;
 
           showMsg({ title: "Settings Saved", body: "Your settings have been saved successfully." }, "green");
           panel.style.display = "none";
@@ -348,11 +384,18 @@
           e.preventDefault();
           const apiUrlInput = document.getElementById("sbs-api-url");
           const secretTokenInput = document.getElementById("sbs-secret-token");
-          const trackerServerInput = document.getElementById("sbs-tracker-server");
+          const trackerServer1Input = document.getElementById("sbs-tracker-server-1");
+          const trackerServer2Input = document.getElementById("sbs-tracker-server-2");
+          const soundEnabledInput = document.getElementById("sbs-sound-enabled");
 
           if (apiUrlInput) apiUrlInput.value = API_URL || CFG.DEFAULT_API_URL;
           if (secretTokenInput) secretTokenInput.value = SECRET_TOKEN || '';
-          if (trackerServerInput) trackerServerInput.value = TRACKER_SERVER || '';
+          if (trackerServer1Input && trackerServer2Input) {
+              const [part1 = '', part2 = ''] = (TRACKER_SERVER || '').split(', ');
+              trackerServer1Input.value = part1;
+              trackerServer2Input.value = part2;
+          }
+          if (soundEnabledInput) soundEnabledInput.checked = SOUND_ENABLED;
 
           settingsPanel.style.display = "block";
       } else if (e.key.toLowerCase() === "p" || e.key.toLowerCase() === "k") {
