@@ -373,14 +373,15 @@
       // No longer starting observer.
   };
 
-  // --- HOTKEYS ---
-  log("Loaded. Press P or K to send scoreboard. Press Alt+Shift+S for settings.");
-  showMsg({ title: "Script Loaded", body: "Google Sheet script loaded (P/K)" }, "lightgreen");
+    // --- HOTKEYS ---
+    log("Loaded. Press P or K to send scoreboard. Press Alt+Shift+S (or Cmd+Shift+S on mac) for settings.");
+    showMsg({ title: "Script Loaded", body: "Google Sheet script loaded (P/K). Settings: Alt/Cmd+Shift+S" }, "lightgreen");
 
   document.addEventListener("keydown", (e) => {
       if (["INPUT", "TEXTAREA"].includes(e.target.tagName)) return;
 
-      if (e.altKey && e.shiftKey && e.key.toLowerCase() === 's') {
+      // Accept Alt+Shift+S on Windows/Linux and Option(Alt)+Shift+S or Cmd+Shift+S on macOS.
+      if ((e.altKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 's') {
           e.preventDefault();
           const apiUrlInput = document.getElementById("sbs-api-url");
           const secretTokenInput = document.getElementById("sbs-secret-token");
