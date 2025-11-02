@@ -34,7 +34,8 @@ function doPost(e) {
       (payload['TR Score'] !== undefined) ? payload['TR Score'] : '',
       (typeof payload['Players JSON'] === 'string') ? payload['Players JSON'] : JSON.stringify(payload['Players JSON'] || []),
       payload.Date || Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyy-MM-dd'),
-      (payload['Match ID'] !== undefined) ? payload['Match ID'] : ''
+      (payload['Match ID'] !== undefined) ? payload['Match ID'] : '',
+      payload['Tracker Server'] || ''
     ];
 
     const lock = LockService.getScriptLock();
