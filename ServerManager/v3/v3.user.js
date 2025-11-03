@@ -35,6 +35,13 @@
         },
         css: `
             /* Card Layout */
+            #my-servers-tab .myservers-card {
+    background: linear-gradient(135deg, rgba(5, 18, 36, 0.88), rgba(12, 49, 87, 0.78));
+    border-radius: 18px;
+    border: 1px solid rgba(55, 184, 255, 0.22);
+    padding: 26px;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+}
             .server-card { background-color: #2a2a2a; border: 1px solid #444; border-radius: 8px; margin-bottom: 15px; padding: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); font-family: Arial, sans-serif; color: #ccc; overflow: hidden; }
             .server-card-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding-bottom: 10px; border-bottom: 1px solid #333; margin-bottom: 10px; transition: background-color 0.2s; }
             .server-card-header:hover { background-color: #333; border-radius: 5px; padding: 5px 10px; margin: -5px -10px 5px; }
@@ -59,13 +66,21 @@
             .admin_add_button:hover { background-color: #45a049; }
 
             /* Server Controls */
-            .server-controls { background-color: #1a1a1a; border: 1px solid #333; border-radius: 8px; padding: 15px; margin-bottom: 15px; display: flex; flex-wrap: wrap; gap: 15px; align-items: center; }
+            .server-controls { background-color: #1a1a1a; border: 1px solid #333; border-radius: 8px; padding: 15px; margin-bottom: 15px; display: flex; flex-direction: column; gap: 15px; }
             .control-group { display: flex; align-items: center; gap: 10px; }
             .control-group label { cursor: pointer; background-color: #333; border: 1px solid #555; border-radius: 5px; padding: 7px 10px; transition: background-color 0.2s; font-size: 0.9em; }
             .control-group input[type="radio"] { display: none; }
             .control-group input[type="radio"]:checked + label { background-color: #007bff; border-color: #007bff; color: white; font-weight: bold; }
-            .action-buttons { margin-left: auto; display: flex; gap: 10px; }
-            .action-buttons button { background-color: #007bff; color: white; padding: 9px 15px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 0.95em; }
+
+            /* Map Picker */
+            .control-map { display: flex; align-items: center; gap: 10px; }
+            .map-picker { display: flex; gap: 5px; flex-wrap: wrap; }
+            .map-picker img { width: 75px; height: 75px; cursor: pointer; border: 2px solid transparent; border-radius: 5px; transition: border-color 0.2s; object-fit: cover; background-color: #2a2a2a; }
+            .map-picker img:hover { border-color: #00aaff; }
+            .map-picker img.selected { border-color: #007bff; box-shadow: 0 0 5px #007bff; }
+
+            .action-buttons { display: flex; gap: 10px; width: 100%; justify-content: flex-end; }
+            .action-buttons button { color: white; padding: 9px 15px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 0.95em; }
             .action-buttons button:hover { background-color: #0056b3; }
             .discord-btn { background-color: #7289da; }
             .discord-btn:hover { background-color: #6778c4; }
@@ -76,17 +91,56 @@
             .save-preset-btn { background-color: #28a745; }
             .save-preset-btn:hover { background-color: #218838; }
 
+            .save-btn3 {
+                background: #0056b3;
+                border: 1px solid rgba(83, 193, 255, 0.45);
+                color: #053252;
+                padding: 10px 24px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                font-size: 14px;
+                font-weight: 600;
+                cursor: pointer;
+                border-radius: 999px;
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+                transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+            }
+
+            .save-btn3:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 12px 24px rgba(55, 184, 255, 0.35);
+                background: linear-gradient(135deg, #ffffff 0%, #d5f3ff 100%);
+                color: #053252;
+                
+            }
+
+            .save-btn3:disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
+                box-shadow: none;
+            }
+
             /* Global Save Button */
             #my-servers-form .table thead, #my-servers-form > .save-btn3 { display: none; }
-            .global-save-button-container { margin-top: 20px; text-align: center; padding: 15px; border-top: 1px solid #444; background-color: #2a2a2a; border-radius: 8px; }
-            .global-save-button-container .save-btn3 { background-color: #dc3545; color: white !important; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 1.1em; text-decoration: none !important; }
+            #my-servers-form .mode-presets { display: none !important; }
+            #my-servers-tab .myservers-inline-actions__cell { display: none !important; }
 
             /* Preset Controls */
             .preset-container { display: inline-flex; align-items: center; margin-right: 5px; }
             .delete-preset-btn { background: #dc3545; color: white; border: none; border-radius: 50%; width: 20px; height: 20px; cursor: pointer; margin-left: -8px; z-index: 1; font-size: 14px; line-height: 20px; text-align: center; padding: 0; }
             .delete-preset-btn:hover { background: #c82333; }
             .control-group label { border-top-right-radius: 0; border-bottom-right-radius: 0; }
-            .global-save-button-container .save-btn3:hover { background-color: #c82333; }
+
+            /* Flag Selector */
+            .flag-selector { display: flex; align-items: center; gap: 8px; padding-left: 100px; }
+            .flag-icon { font-size: 1.5em; cursor: pointer; opacity: 0.6; transition: opacity 0.2s, transform 0.2s; }
+            .flag-icon:hover { opacity: 1; transform: scale(1.1); }
+            .flag-icon.selected { opacity: 1; transform: scale(1.1); border-bottom: 2px solid #00aaff; }
 
             /* Discord Modal */
             #sbd-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; justify-content: center; align-items: center; z-index: 10001; visibility: hidden; opacity: 0; transition: visibility 0s, opacity 0.3s; }
@@ -99,14 +153,6 @@
             #sbd-clear-btn { background: #e74c3c; } #sbd-clear-btn:hover { background: #c0392b; }
             #sbd-cancel-btn { background: #747f8d; } #sbd-cancel-btn:hover { background: #5f6a7b; }
             #sbd-save-btn { background: #7289da; } #sbd-save-btn:hover { background: #6778c4; }
-
-            /* Searchable Dropdown */
-            .searchable-select-container { position: relative; width: 100%; }
-            .searchable-select-input { width: 100%; }
-            .searchable-select-dropdown { position: absolute; top: 100%; left: 0; right: 0; background-color: #2a2a2a; border: 1px solid #444; border-radius: 4px; max-height: 200px; overflow-y: auto; z-index: 1000; display: none; }
-            .searchable-select-dropdown .option { padding: 8px; cursor: pointer; }
-            .searchable-select-dropdown .option:hover { background-color: #333; }
-            .searchable-select-dropdown .option.hidden { display: none; }
 
             /* Toast Notifications */
             #toast-container { position: fixed; top: 20px; right: 20px; z-index: 10002; display: flex; flex-direction: column; gap: 10px; }
@@ -185,41 +231,38 @@
             <span class="toggle-icon">&#x25B6;</span>`;
     };
 
-    /** Create Searchable Dropdown for Maps */
-    function createSearchableDropdown(originalSelect) {
-        const container = createAndAppendElement('div', originalSelect.parentNode, { classList: ['searchable-select-container'] });
+    /** Create Flag-based Country Selector */
+    function createFlagSelector(originalSelect) {
+        const container = createAndAppendElement('div', originalSelect.parentNode, { classList: ['flag-selector'] });
         originalSelect.parentNode.insertBefore(container, originalSelect);
-
-        const input = createAndAppendElement('input', container, { type: 'text', classList: ['searchable-select-input'], placeholder: 'Search maps...' });
-        const dropdown = createAndAppendElement('div', container, { classList: ['searchable-select-dropdown'] });
-        const options = Array.from(originalSelect.options).map(opt => {
-            const optionEl = createAndAppendElement('div', dropdown, { classList: ['option'], dataset: { value: opt.value } }, opt.textContent);
-            optionEl.addEventListener('click', () => {
-                input.value = optionEl.textContent;
-                originalSelect.value = optionEl.dataset.value;
-                originalSelect.dispatchEvent(new Event('change', { bubbles: true }));
-                dropdown.style.display = 'none';
-            });
-            return optionEl;
-        });
-
-        if (originalSelect.value) {
-            const selectedOption = originalSelect.querySelector(`option[value="${originalSelect.value}"]`);
-            if (selectedOption) input.value = selectedOption.textContent;
-        }
         originalSelect.style.display = 'none';
 
-        input.addEventListener('click', e => {
-            e.stopPropagation();
-            document.querySelectorAll('.searchable-select-dropdown').forEach(d => d.style.display = 'none');
-            dropdown.style.display = 'block';
+        const flags = Array.from(originalSelect.options).map(opt => {
+            const countryCode = opt.value === 'ny' ? 'us' : opt.value;
+            const flag = createAndAppendElement('span', container, {
+                classList: ['flag-icon', `flag-icon-${countryCode}`],
+                dataset: { value: opt.value },
+                title: opt.textContent
+            });
+
+            flag.addEventListener('click', () => {
+                originalSelect.value = flag.dataset.value;
+                originalSelect.dispatchEvent(new Event('change', { bubbles: true }));
+                container.querySelectorAll('.flag-icon').forEach(f => f.classList.remove('selected'));
+                flag.classList.add('selected');
+            });
+
+            return flag;
         });
-        document.addEventListener('click', () => dropdown.style.display = 'none');
-        input.addEventListener('input', () => {
-            const filter = input.value.toLowerCase();
-            options.forEach(opt => opt.classList.toggle('hidden', !opt.textContent.toLowerCase().includes(filter)));
-        });
+
+        const setSelectedFlag = () => {
+            flags.forEach(f => f.classList.toggle('selected', f.dataset.value === originalSelect.value));
+        };
+
+        setSelectedFlag();
+        new MutationObserver(setSelectedFlag).observe(originalSelect, { attributes: true });
     }
+
 
     /** Discord Webhook Modal */
     let discordWebhookModal;
@@ -270,6 +313,121 @@
     }
     function hideDiscordWebhookModal() {
         if (discordWebhookModal) discordWebhookModal.classList.remove('visible');
+    }
+
+    /** Create Map Picker */
+    function createMapPicker(parent, serverId) {
+        const detailsDiv = parent.closest('.server-card-details');
+        const mapContainer = createAndAppendElement('div', parent, { classList: ['control-map'] });
+        mapContainer.innerHTML = '<span>MAP:</span>';
+        const picker = createAndAppendElement('div', mapContainer, { classList: ['map-picker'] });
+
+        const maps = [
+            { name: 'de_dust2' },
+            { name: 'de_inferno' },
+            { name: 'de_mirage' },
+            { name: 'de_nuke' },
+            { name: 'de_tuscan' },
+            { name: 'de_train' },
+            { name: 'de_cache_v2' }
+        ];
+
+        const mapSelect = detailsDiv.querySelector(`select[name="server[${serverId}][map]"]`);
+
+    maps.forEach(map => {
+            // Use Placehold.co as the primary thumbnail, but keep original filename for fallback
+            const displayText = map.name.replace(/_/g, ' ');
+            const img = createAndAppendElement('img', picker, {
+                src: `https://placehold.co/75x75/2a2a2a/ffffff?text=${encodeURIComponent(displayText)}&font_size=18`,
+                title: map.name,
+                dataset: { map: map.name },
+                alt: map.name,
+                width: '75',
+                height: '75',
+                loading: 'lazy'
+            });
+
+            // No fallback to repository images — use placeholders only
+
+            img.addEventListener('click', () => {
+                // Use the shared setter so thumbnails and select stay in sync
+                setMapSelection(map.name);
+            });
+        });
+
+        // Helper: select a map by name/value and update UI
+        const setMapSelection = (mapName) => {
+            if (!mapName) return;
+            // Try to match an option in the select by text or value
+            if (mapSelect) {
+                const option = Array.from(mapSelect.options).find(opt => {
+                    const txt = (opt.textContent || '').trim().toLowerCase();
+                    const val = (opt.value || '').trim().toLowerCase();
+                    return txt === mapName.toLowerCase() || txt.includes(mapName.toLowerCase()) || val === mapName.toLowerCase() || val.includes(mapName.toLowerCase());
+                });
+                if (option) {
+                    // Prefer setting the option.selected flag so selects without meaningful values still update
+                    try {
+                        option.selected = true;
+                        // Also set the select's value where possible
+                        if (option.value !== undefined && option.value !== null) mapSelect.value = option.value;
+                    } catch (e) {
+                        // Fallback to setting value
+                        mapSelect.value = option.value || mapName;
+                    }
+                    // Dispatch both change and input to ensure enhanced/select replacement libraries pick it up
+                    mapSelect.dispatchEvent(new Event('input', { bubbles: true }));
+                    mapSelect.dispatchEvent(new Event('change', { bubbles: true }));
+                }
+            }
+            // Update thumbnail selection visually
+            picker.querySelectorAll('img').forEach(i => {
+                const imgMap = (i.dataset.map || '').toLowerCase();
+                i.classList.toggle('selected', imgMap === mapName.toLowerCase());
+            });
+        };
+
+        const updateSelectedMap = () => {
+            if (!mapSelect) return; // defensive
+            const selectedMapName = mapSelect.options[mapSelect.selectedIndex]?.textContent || '';
+            picker.querySelectorAll('img').forEach(img => {
+                img.classList.toggle('selected', selectedMapName.toLowerCase().includes((img.dataset.map || '').toLowerCase()));
+            });
+        };
+
+        // Wire up any inline map-search UI found in the original table cell
+        const mapSearchWrapper = detailsDiv.querySelector('.map-search-wrapper');
+        if (mapSearchWrapper) {
+            const searchInput = mapSearchWrapper.querySelector('.map-search-input');
+            const searchOptions = Array.from(mapSearchWrapper.querySelectorAll('.map-search-option'));
+
+            // Clicking an option sets the select and updates thumbnails
+            searchOptions.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const value = (btn.dataset.value || btn.textContent || '').trim();
+                    if (value) setMapSelection(value);
+                });
+            });
+
+            // Filter the option buttons as the user types
+            if (searchInput) {
+                searchInput.addEventListener('input', () => {
+                    const q = (searchInput.value || '').trim().toLowerCase();
+                    searchOptions.forEach(b => {
+                        const v = (b.dataset.value || b.textContent || '').toLowerCase();
+                        b.style.display = (!q || v.includes(q)) ? '' : 'none';
+                    });
+                });
+            }
+        }
+
+        if (mapSelect) {
+            updateSelectedMap();
+            // Prefer listening to the 'change' event for reliable selection updates
+            mapSelect.addEventListener('change', updateSelectedMap);
+            // Also observe structural changes to the select/options (e.g., options loaded/replaced)
+            new MutationObserver(updateSelectedMap).observe(mapSelect, { childList: true, subtree: false });
+        }
     }
 
     // --- 4. FEATURE MODULES ---
@@ -556,29 +714,20 @@
         if (!myServersForm) return;
 
         // --- A. Setup Collapsible Page Sections ---
-        const newServerHeader = document.querySelector('.article-container h3:nth-of-type(1)');
-        const newServerForm = getElementById('new-server-form');
-        if (newServerHeader && newServerForm) {
-            const newServerContent = document.createElement('div');
-            // Move form and adjacent text/links into the new container
-            let nextElem = newServerForm;
-            while (nextElem && nextElem.tagName !== 'H3') {
-                const current = nextElem;
-                nextElem = nextElem.nextSibling;
-                newServerContent.appendChild(current);
-            }
-            newServerHeader.parentNode.insertBefore(newServerContent, newServerHeader.nextSibling);
-            makeCollapsible(newServerHeader, newServerContent);
-        }
+        const newServerHeader = document.querySelector('.myservers-card--new .myservers-card__header');
+        const newServerContent = document.querySelector('.myservers-card--new .myservers-card__body');
+        makeCollapsible(newServerHeader, newServerContent);
 
-        const specsHeader = document.querySelector('.article-container h3:nth-of-type(2)');
-        const specsList = getElementById('myservers_description');
-        makeCollapsible(specsHeader, specsList);
+        const specsHeader = document.querySelector('.myservers-card--specs .myservers-card__header');
+        const specsContent = document.querySelector('.myservers-card--specs .myservers-card__body');
+        makeCollapsible(specsHeader, specsContent);
 
         // --- B. Transform Server Table to Cards ---
         const originalTable = myServersForm.querySelector(CONFIG.originalTableSelector);
         const tbody = originalTable?.querySelector('tbody');
         if (!originalTable || !tbody) return;
+
+        const globalSaveButton = myServersForm.querySelector(`.${CONFIG.globalSaveButtonClass}`);
 
         const serverCardsContainer = createAndAppendElement('div', originalTable.parentNode, { id: CONFIG.cardContainerId });
         originalTable.parentNode.insertBefore(serverCardsContainer, originalTable);
@@ -609,8 +758,10 @@
 
                 // Create Controls
                 const serverControls = createAndAppendElement('div', detailsDiv, { classList: ['server-controls'] });
-                const controlGroup = createAndAppendElement('div', serverControls, { classList: ['control-group'] });
+                const topControls = createAndAppendElement('div', serverControls, { style: "display: flex; width: 100%; gap: 15px;" });
+                const controlGroup = createAndAppendElement('div', topControls, { classList: ['control-group'] });
                 updatePresetControls(controlGroup, serverId, detailsDiv);
+                createMapPicker(topControls, serverId);
 
                 const actionButtons = createAndAppendElement('div', serverControls, { classList: ['action-buttons'] });
                 actionButtons.innerHTML = `
@@ -618,6 +769,9 @@
                     <button type="button" class="copy-link-btn" data-server-id="${serverId}"><i class="fa fa-clipboard"></i> Copy Link</button>
                     <button type="button" class="discord-btn" data-server-id="${serverId}"><i class="fa fa-discord"></i> Share to Discord</button>
                 `;
+                if (globalSaveButton) {
+                    actionButtons.appendChild(globalSaveButton.cloneNode(true));
+                }
                 detailsDiv.insertBefore(serverControls, detailsDiv.firstChild);
 
                 // Move row into details table
@@ -682,14 +836,8 @@
         originalTable.style.display = 'none';
 
         // --- C. Finalize UI Enhancements ---
-        const globalSaveButton = myServersForm.querySelector(`.${CONFIG.globalSaveButtonClass}`);
-        if (globalSaveButton) {
-            const container = createAndAppendElement('div', myServersForm, { classList: ['global-save-button-container'] });
-            container.appendChild(globalSaveButton.cloneNode(true));
-        }
-
+        document.querySelectorAll('select[name$="[country]"]').forEach(createFlagSelector);
         document.querySelectorAll('.admin_notice').forEach(fetchAndDisplayOwnerUsername);
-        document.querySelectorAll('select[name$="[map]"]').forEach(createSearchableDropdown);
         createDiscordWebhookModal(); // Pre-build the modal structure
         document.addEventListener('keydown', e => {
             if (e.altKey && e.shiftKey && e.key === 'D') {
