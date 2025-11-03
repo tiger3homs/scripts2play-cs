@@ -75,7 +75,7 @@
             /* Map Picker */
             .control-map { display: flex; align-items: center; gap: 10px; }
             .map-picker { display: flex; gap: 5px; flex-wrap: wrap; }
-            .map-picker img { width: 75px; height: 75px; cursor: pointer; border: 2px solid transparent; border-radius: 5px; transition: border-color 0.2s; object-fit: cover; background-color: #2a2a2a; }
+            .map-picker img { width: 100px; height: 40px; cursor: pointer; border: 2px solid transparent; border-radius: 5px; transition: border-color 0.2s; object-fit: cover; background-color: #2a2a2a; }
             .map-picker img:hover { border-color: #00aaff; }
             .map-picker img.selected { border-color: #007bff; box-shadow: 0 0 5px #007bff; }
 
@@ -116,7 +116,7 @@
                 box-shadow: 0 12px 24px rgba(55, 184, 255, 0.35);
                 background: linear-gradient(135deg, #ffffff 0%, #d5f3ff 100%);
                 color: #053252;
-                
+
             }
 
             .save-btn3:disabled {
@@ -332,18 +332,26 @@
             { name: 'de_cache_v2' }
         ];
 
-        const mapSelect = detailsDiv.querySelector(`select[name="server[${serverId}][map]"]`);
+        // Don't rely on the select existing at call time; the original row may be moved later.
+        let mapSelect = detailsDiv.querySelector(`select[name="server[${serverId}][map]"]`) || document.querySelector(`select[name="server[${serverId}][map]"]`);
+
+        const getMapSelect = () => {
+            if (!mapSelect || !document.contains(mapSelect)) {
+                mapSelect = detailsDiv.querySelector(`select[name="server[${serverId}][map]"]`) || document.querySelector(`select[name="server[${serverId}][map]"]`);
+            }
+            return mapSelect;
+        };
 
     maps.forEach(map => {
             // Use Placehold.co as the primary thumbnail, but keep original filename for fallback
-            const displayText = map.name.replace(/_/g, ' ');
+            const displayText = map.name.replace(/_/g, ' '); // This will now be "dust2", "inferno", etc.
             const img = createAndAppendElement('img', picker, {
-                src: `https://placehold.co/75x75/2a2a2a/ffffff?text=${encodeURIComponent(displayText)}&font_size=18`,
+                src: `https://placehold.co/100x40/2a2a2a/ffffff?font=roboto&text=${encodeURIComponent(displayText)}`,
                 title: map.name,
                 dataset: { map: map.name },
                 alt: map.name,
-                width: '75',
-                height: '75',
+                width: '100',
+                height: '40',
                 loading: 'lazy'
             });
 
@@ -359,8 +367,9 @@
         const setMapSelection = (mapName) => {
             if (!mapName) return;
             // Try to match an option in the select by text or value
-            if (mapSelect) {
-                const option = Array.from(mapSelect.options).find(opt => {
+            const ms = getMapSelect();
+            if (ms) {
+                const option = Array.from(ms.options).find(opt => {
                     const txt = (opt.textContent || '').trim().toLowerCase();
                     const val = (opt.value || '').trim().toLowerCase();
                     return txt === mapName.toLowerCase() || txt.includes(mapName.toLowerCase()) || val === mapName.toLowerCase() || val.includes(mapName.toLowerCase());
@@ -369,15 +378,14 @@
                     // Prefer setting the option.selected flag so selects without meaningful values still update
                     try {
                         option.selected = true;
-                        // Also set the select's value where possible
-                        if (option.value !== undefined && option.value !== null) mapSelect.value = option.value;
+                        ms.value = mapName; // Modified line to use cleaned map name
                     } catch (e) {
                         // Fallback to setting value
-                        mapSelect.value = option.value || mapName;
+                        ms.value = mapName; // Modified line to use cleaned map name
                     }
                     // Dispatch both change and input to ensure enhanced/select replacement libraries pick it up
-                    mapSelect.dispatchEvent(new Event('input', { bubbles: true }));
-                    mapSelect.dispatchEvent(new Event('change', { bubbles: true }));
+                    ms.dispatchEvent(new Event('input', { bubbles: true }));
+                    ms.dispatchEvent(new Event('change', { bubbles: true }));
                 }
             }
             // Update thumbnail selection visually
@@ -388,8 +396,9 @@
         };
 
         const updateSelectedMap = () => {
-            if (!mapSelect) return; // defensive
-            const selectedMapName = mapSelect.options[mapSelect.selectedIndex]?.textContent || '';
+            const ms = getMapSelect();
+            if (!ms) return; // defensive
+            const selectedMapName = ms.options[ms.selectedIndex]?.textContent || '';
             picker.querySelectorAll('img').forEach(img => {
                 img.classList.toggle('selected', selectedMapName.toLowerCase().includes((img.dataset.map || '').toLowerCase()));
             });
@@ -421,13 +430,22 @@
             }
         }
 
-        if (mapSelect) {
+        // If the select exists now, wire it, otherwise observe the detailsDiv for the select being added
+        const wireSelect = (ms) => {
+            if (!ms) return;
             updateSelectedMap();
-            // Prefer listening to the 'change' event for reliable selection updates
-            mapSelect.addEventListener('change', updateSelectedMap);
-            // Also observe structural changes to the select/options (e.g., options loaded/replaced)
-            new MutationObserver(updateSelectedMap).observe(mapSelect, { childList: true, subtree: false });
-        }
+            ms.addEventListener('change', updateSelectedMap);
+            new MutationObserver(updateSelectedMap).observe(ms, { childList: true, subtree: false });
+        };
+
+        wireSelect(getMapSelect());
+
+        // Watch the detailsDiv and document for the select being inserted/moved later
+        const observer = new MutationObserver(() => {
+            const ms = getMapSelect();
+            if (ms) wireSelect(ms);
+        });
+        observer.observe(detailsDiv, { childList: true, subtree: true });
     }
 
     // --- 4. FEATURE MODULES ---
@@ -836,7 +854,9 @@
         originalTable.style.display = 'none';
 
         // --- C. Finalize UI Enhancements ---
-        document.querySelectorAll('select[name$="[country]"]').forEach(createFlagSelector);
+    document.querySelectorAll('select[name$="[country]"]').forEach(createFlagSelector);
+    // The following line is removed to disable the searchable dropdown:
+    // document.querySelectorAll('select[name$="[map]"]').forEach(createSearchableDropdown);
         document.querySelectorAll('.admin_notice').forEach(fetchAndDisplayOwnerUsername);
         createDiscordWebhookModal(); // Pre-build the modal structure
         document.addEventListener('keydown', e => {
