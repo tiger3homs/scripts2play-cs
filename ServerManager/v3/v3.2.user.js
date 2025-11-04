@@ -180,7 +180,7 @@
 
         if (type === 'copy') {
             try {
-                await navigator.clipboard.writeText(`${serverLink}\n\n\n${pin}`);
+                await navigator.clipboard.writeText(`Link: ${serverLink}\n\nPin: ${pin}`);
                 showToast('Server link and PIN copied!', 'success');
             } catch (err) {
                 showToast('Failed to copy link.', 'error');
