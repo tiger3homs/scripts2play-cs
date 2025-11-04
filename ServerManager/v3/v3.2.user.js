@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         CS Server Manager (Optimized)
+// @name         CS Server Manager
 // @namespace    http://tampermonkey.net/
 // @version      3.2
 // @description  A powerful, optimized hub for managing your play-cs.com servers.
