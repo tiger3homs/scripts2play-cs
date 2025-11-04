@@ -304,11 +304,11 @@
                   <input type="password" id="sbs-secret-token">
               </div>
               <div class="sbs-row">
-                  <label for="sbs-tracker-server-1">Tracker Server:</label>
+                  <label for="sbs-tracker-server-1">Tracker Name:</label>
                   <input type="text" id="sbs-tracker-server-1" placeholder="e.g., OBBE">
               </div>
               <div class="sbs-row">
-                  <label for="sbs-tracker-server-2">Tracker Name:</label>
+                  <label for="sbs-tracker-server-2">Tracker Server:</label>
                   <input type="text" id="sbs-tracker-server-2" placeholder="e.g., GANGS">
               </div>
               <div class="sbs-row">
