@@ -2,5 +2,5 @@
 
 | CLAN ID      | CLAN         | CLAN TAG | MEMBER              | LOGO                   |
 | ------------ | ------------ | -------- | ------------------- | ---------------------- |
-| CLAN1 | Example Clan | EXC      | 057f0ad9a01e26acc54f17f2f3b676, a9a7567ff19cff6f3a4ff9e6df3c57, e545bb3cdf754948efab577521b425, 19ece94cea77ea590223818d0bed85, a6c8466685333a97c6cd5a838bc095, 56fc871614683557f9c2d5911cb497, a6c8466685333a97c6cd5a838bc095, 1fbce2974e72b73e4f3186eeb0d22f, 1366331f58686bab00dc87507ef87b, e1777b00c4b57810556d3b72f861e0 | https://raw.githubusercontent.com/tiger3homs/scripts2play-cs/refs/heads/main/all_started_from_here/online/clanexemple.webp |
+| CLAN1 | EXODUS | _ex      | 732b49470e097bfc8fc68026ddd154, 52aa12dd61b837ad65b15232e18f77, 78f1c040536c6ee9841f6d7842b02b, 52aa12dd61b837ad65b15232e18f89, ac874f30b73dcc28e6b251f705cfaa, b2999b786202cef50eaa52d5903df4, 97725734005aecd8ed23bf291e4022, 2dca95a617553f0a3fd069afee9fb1 | https://raw.githubusercontent.com/tiger3homs/scripts2play-cs/refs/heads/main/all_started_from_here/online/clanexemple.webp |
 
