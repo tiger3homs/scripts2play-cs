@@ -1,53 +1,130 @@
-# CS UserConfig
+# CS User Config v3 (Latest - Install This)
 
-## Overview
+Automatically executes a set of commands when you join a server, providing a convenient in-game UI to add, edit, enable, or disable your custom commands.
 
-This is a Tampermonkey user script designed for the web-based shooter game at `www.play-cs.com`. It automates the process of entering a series of console commands at the beginning of each match. This saves you from having to manually type them every time, allowing you to quickly set up your preferred key bindings and game settings.
+**📌 Installation File: `v3.user.js`**
+
+<br>
+
+![alt text](image-2.png)
 
 ## Features
 
-*   **Automated Command Execution**: Automatically runs a predefined set of commands when a match starts.
-*   **One-Time Execution**: The script runs only once per match to avoid spamming the console.
-*   **Fully Customizable**: You can easily edit the script to add, remove, or modify the commands to fit your personal play style.
-
-## Source and Conversion
-
-This script was converted from a Chrome Extension. The original source code can be found at the following GitHub repository:
-
-*   **Source:** [https://github.com/mrquaketotheworld/UserConfig](https://github.com/mrquaketotheworld/UserConfig)
+*   **Automatic Execution**: Configured commands run automatically when you join a server.
+*   **Modern UI**: A sleek, floating gear icon opens a modal window for managing commands.
+*   **Interactive Management**: The modal allows for:
+    *   Adding new commands
+    *   Editing existing commands
+    *   Enabling/disabling commands individually
+    *   Saving your configuration
+    *   Manually re-running all enabled commands
+*   **Persistent Storage**: Your command list is saved using Tampermonkey's storage, so it persists across browser sessions.
+*   **Default Commands**: Comes pre-loaded with useful binds (e.g., scroll wheel jump/duck, quick chat messages, weapon binds, display settings).
+*   **Developer Friendly**: Designed for easy extension and modification by users.
 
 ## Installation
 
-To use this script, you must first have a user script manager installed in your browser. [Tampermonkey](https://www.tampermonkey.net/) is the recommended choice.
+1.  **Install Tampermonkey**: If you don't have it already, install the Tampermonkey browser extension for your browser:
+    *   [Chrome](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo)
+    *   [Firefox](https://addons.mozilla.org/en-US/firefox/addon/tampermonkey/)
+    *   [Edge](https://microsoftedge.microsoft.com/addons/detail/tampermonkey/iikmkjmpbldmmepgdkmfapfmccihdgpb)
+    *   [Opera](https://addons.opera.com/en/extensions/details/tampermonkey-beta/)
+2.  **Create a New User Script**:
+    *   Click on the Tampermonkey icon in your browser toolbar.
+    *   Select "Create a new script...".
+3.  **Paste the Script**: Delete any existing code in the new script editor and paste the entire content of `v3.user.js` into it.
+4.  **Save**: Save the script (usually by pressing `Ctrl + S` or `File > Save`).
 
-1.  **Install Tampermonkey**: If you don't already have it, install the Tampermonkey extension for your browser (available for Chrome, Firefox, Edge, Safari, and more).
-2.  **Install the Script**:
-    *   Open the Tampermonkey dashboard in your browser.
-    *   Click on the **"Create a new script"** tab (usually marked with a `+` icon).
-    *   Delete the default content in the editor.
-    *   Copy the entire content of the user script and paste it into the editor.
-    *   Go to **File > Save** to complete the installation.
+## How to Use
 
-## How It Works
+1.  **Join a Play-CS.com Server**: Navigate to `https://game.play-cs.com/` and join any server.
+2.  **Automatic Execution**: Once you're in the game and the chat input appears, the script will automatically execute all currently enabled commands.
+3.  **Open the Menu**: Click the floating **gear icon** (⚙️) on the top right of the screen to open the "CS User Config" menu.
+    *   If you're in pointer-lock mode (first-person view), the script will automatically exit pointer-lock to allow interaction with the menu.
+4.  **Toggle Icon Visibility**: If the gear icon is in your way, press `Alt + Shift + X` to hide or show it.
+5.  **Manage Commands**:
+    *   **Enable/Disable**: Use the checkboxes next to each command to enable or disable it.
+    *   **Edit**: Click directly on a command's text field to modify it.
+    *   **Add New**: Type a command into the "New command" input field and click "Add".
+    *   **Remove**: Click the "X" button next to a command to delete it.
+5.  **Save Configuration**: After making changes, click "Save Configuration" to save your current list of commands and their enabled states. These will be loaded automatically next time you play.
+6.  **Rerun Commands**: Click "Rerun Commands" to immediately execute all currently enabled commands again (useful for applying changes without rejoining).
 
-The script monitors the game's interface for the match timer. Once the timer appears and is not at `0:00`, the script injects and submits each of the predefined commands into the in-game chat/console input field.
+## Default Commands Included
 
-The `executed` flag ensures that this action is performed only once per page load.
+*   `bind "MWHEELDOWN" "-duck"`
+*   `bind "MWHEELUP" "+duck"`
+*   `bind "f3" "say NOtt LIVE ⚪❌"`
+*   `bind "f4" "say KNIVES 🔪🗡️"`
+*   `bind "f8" "flash;flash;sgren;"`
+*   `bind "f5" "deagle;secammo"`
+*   `cl_lw 1`
+*   `cl_lc 1`
+*   `cl_bob 0`
 
-## Customization
+## Troubleshooting
 
-You can customize the commands by editing the `commands` array within the script.
+*   **Menu not appearing**: Ensure Tampermonkey is enabled for `play-cs.com`. Check your browser's console (`F12`) for any errors.
+*   **Commands not executing**: Make sure you are in an actual server where the chat input box is visible. The script waits for the game UI to appear.
+*   **Keybinds not working outside menu**: If you have the menu open, make sure you click outside of the menu or click the gear icon again to close it and re-enable pointer lock/game controls.
+*   **Commands not saving**: Ensure you click "Save" after making changes. Check Tampermonkey's storage for `cs_user_config_commands_v3`.
 
-```javascript
-const commands = [
-    // Add or remove commands here
-    // Format: ['command', true],
-    ['bind "MWHEELDOWN" "-duck"', true],
-    ['bind "MWHEELUP" "+duck"', true],
-    // ... more commands
-];
+## Contribution
 
-To disable a command without deleting it, you can change true to false:
+This script was initially created by `tiger3homs` (aka `obbe.00` on Discord) and was significantly refactored and improved in v3. Feel free to fork, modify, and suggest improvements!
 
-// This command is now disabled
-['bind "f3" "say NOtt LIVE ⚪❌"', false],
+<br>
+
+## Other Commands 
+
+blood "0"
+canvas_width "100"
+chat_enable "1"
+cl_bobcycle "0.8"
+cl_crosshair_color "0 0 0"
+cl_crosshair_size "small"
+cl_crosshair_translucent "1"
+cl_dynamiccrosshair "0"
+cl_minmodels "0"
+cl_weather "0"
+country_hide "1"
+ct_model "5"
+decals "0"
+feedback "1"
+fireinhole "1"
+fps_max "150"
+gamma "5"
+grenadechat_enable "1"
+hand2 "1"
+hud_centerid "1"
+inverted-mouse "0"
+knife_model "14"
+m_pitch "0.022"
+minmodels "0"
+motd_enable "1"
+mp_decals "1"
+name "OBBE_ex"
+net_optimization "0"
+notifications "1"
+r_drawviewmodel "1"
+sensitivity "1.49"
+sensivity "3"
+statsx_enable "1"
+stretch_canvas "1"
+switch_sound "0"
+tr_model "5"
+vid_mode "23"
+voice_chat_off "0"
+volume "0.2"
+wheel_jump_everywhere "1"
+zoom_sensitivity_ratio "1.2"
+_cl_autowepswitch "0"
+cl_min_t 6
+cl_min_ct 2
+cl_minmodels 1
+
+![alt text](image-1.png)
+
+***
+
+`
